@@ -19,45 +19,48 @@ import ch.rollis.emma.HttpProtocolException.HttpProtocolException;
  *
  */
 public class HttpRequestHandler implements Runnable {
-    private final Socket socket;
+    private final Socket clientSocket;
     private final Logger logger;
 
     public HttpRequestHandler(Socket socket, Logger logger) {
-        this.socket = socket;
+        this.clientSocket = socket;
         this.logger = logger;
     }
     @Override
     public void run() {
+        HttpProtocolParser parser;
         HttpRequest request;
         HttpResponse response;
         InetAddress client;
 
-        client = socket.getInetAddress();
+        client = clientSocket.getInetAddress();
         logger.log(Level.INFO, client.getCanonicalHostName() + " has connected.");
 
         try {
-            InputStream input = socket.getInputStream();
-            OutputStream output = socket.getOutputStream();
+            InputStream input = clientSocket.getInputStream();
+            OutputStream output = clientSocket.getOutputStream();
 
-            request= new HttpRequest(input);
+            parser = new HttpProtocolParser(input);
             try {
-                request.parse();
+                request = parser.parse();
             } catch (HttpProtocolException e) {
                 logger.log(Level.SEVERE, "HTTP protocol violation", e);
 
                 HttpResponseStatus resStatus = HttpResponseStatus.BAD_REQUEST;
-                response = new HttpResponse(output, request);
+                response = new HttpResponse(output);
                 response.setStatus(resStatus);
                 response.send("<h1>" + resStatus.getReasonPhrase() + "</h1>");
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "HTTP protocol violation", e);
 
                 HttpResponseStatus resStatus = HttpResponseStatus.INTERNAL_SERVER_ERROR;
-                response = new HttpResponse(output, request);
+                response = new HttpResponse(output);
                 response.setStatus(resStatus);
                 response.send("<h1>" + resStatus.getReasonPhrase() + "</h1>");
             } finally {
-                socket.close();
+                if (clientSocket != null && !clientSocket.isClosed()) {
+                    clientSocket.close();
+                }
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error closing socket.", e);

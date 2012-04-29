@@ -10,18 +10,26 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class HttpResponse {
-    private final OutputStream out;
-    private final HttpRequest req;
+    private final OutputStream output;
+    private String protocol;
     private HttpResponseStatus status;
     private final HashMap<String, String> headers;
 
     private static final String CRLF = "\r\n";
     private static final String SP = " ";
 
-    public HttpResponse(OutputStream output, HttpRequest request) {
-        out = new BufferedOutputStream(output);
-        req = request;
+    public HttpResponse(OutputStream output) {
+        this(output, "HTTP/1.1");
+    }
+
+    public HttpResponse(OutputStream output, String protocol) {
+        this.output = new BufferedOutputStream(output);
+        this.protocol = protocol;
         headers = new HashMap<String, String>();
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     public void setStatus(HttpResponseStatus status) {
@@ -39,15 +47,15 @@ public class HttpResponse {
         body = body + "\r\n";
         sendStatusLine();
         sendHeaders();
-        out.write(body.getBytes());
-        out.flush();
+        output.write(body.getBytes());
+        output.flush();
     }
 
     private void sendStatusLine() throws IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append(req.getProtocolVersion()).append(SP).append(status.getCode()).append(SP)
+        sb.append(protocol).append(SP).append(status.getCode()).append(SP)
         .append(status.getReasonPhrase()).append(CRLF);
-        out.write(sb.toString().getBytes());
+        output.write(sb.toString().getBytes());
     }
 
     private void sendHeaders() throws IOException {
@@ -58,10 +66,10 @@ public class HttpResponse {
             headers.put("Date", formatter.format(new Date()));
         }
         for (String field : headers.keySet()) {
-            out.write(String.format("%s: %s", field, headers.get(field)).getBytes());
-            out.write(CRLF.getBytes());
+            output.write(String.format("%s: %s", field, headers.get(field)).getBytes());
+            output.write(CRLF.getBytes());
         }
-        out.write(CRLF.getBytes());
+        output.write(CRLF.getBytes());
     }
 
 }
