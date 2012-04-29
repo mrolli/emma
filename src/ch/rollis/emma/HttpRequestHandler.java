@@ -43,18 +43,26 @@ public class HttpRequestHandler implements Runnable {
             try {
                 request.parse();
             } catch (HttpProtocolException e) {
-                String errorMessage = "HTTP/1.0 400 Bad Request\r\n\r\n<h1>Bad Request</h1>";
-                output.write(errorMessage.getBytes());
-            } catch (IOException e) {
-                // response.setCode(400);
-            }
+                logger.log(Level.SEVERE, "HTTP protocol violation", e);
 
-            socket.close();
+                HttpResponseStatus resStatus = HttpResponseStatus.BAD_REQUEST;
+                response = new HttpResponse(output, request);
+                response.setStatus(resStatus);
+                response.send("<h1>" + resStatus.getReasonPhrase() + "</h1>");
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "HTTP protocol violation", e);
+
+                HttpResponseStatus resStatus = HttpResponseStatus.INTERNAL_SERVER_ERROR;
+                response = new HttpResponse(output, request);
+                response.setStatus(resStatus);
+                response.send("<h1>" + resStatus.getReasonPhrase() + "</h1>");
+            } finally {
+                socket.close();
+            }
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error closing socket.", e);
         }
 
         logger.log(Level.INFO, Thread.currentThread().getName() + " ended.");
     }
-
 }
