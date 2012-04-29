@@ -39,7 +39,7 @@ public class HttpRequestHandler implements Runnable {
             try {
                 HttpRequest request = parser.parse();
                 HttpResponse response = new HttpResponse(output);
-                response.setProtocol(request.getProtocol());
+                response.setRequest(request);
                 response.setStatus(HttpResponseStatus.OK);
                 response.send(request.getRequestURI().getPath() + "<br />\n"
                         + request.getRequestURI().getQuery());

@@ -12,6 +12,7 @@ import java.util.TimeZone;
 public class HttpResponse {
     private final OutputStream output;
     private String protocol;
+    private HttpRequest request;
     private HttpResponseStatus status;
     private final HashMap<String, String> headers;
 
@@ -32,6 +33,17 @@ public class HttpResponse {
         this.protocol = protocol;
     }
 
+    public String getProtocol() {
+        if (request != null) {
+            return request.getProtocol();
+        }
+        return protocol;
+    }
+
+    public void setRequest(HttpRequest request) {
+        this.request = request;
+    }
+
     public void setStatus(HttpResponseStatus status) {
         this.status = status;
     }
@@ -50,8 +62,11 @@ public class HttpResponse {
 
         sendStatusLine();
         sendHeaders();
-        output.write(rawBody);
-        output.write(CRLF.getBytes());
+
+        if (request == null || request.getMethod() != HttpMethod.HEAD) {
+            output.write(rawBody);
+            output.write(CRLF.getBytes());
+        }
         output.flush();
     }
 
