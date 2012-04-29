@@ -1,5 +1,6 @@
-package ch.rollis.emma.HttpProtocolException;
+package ch.rollis.emma;
 
+@SuppressWarnings("serial")
 public class HttpProtocolException extends Exception {
     public HttpProtocolException(String msg) {
         super(msg);

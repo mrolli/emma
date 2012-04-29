@@ -9,9 +9,6 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ch.rollis.emma.HttpProtocolException.BadRequestException;
-import ch.rollis.emma.HttpProtocolException.HttpProtocolException;
-
 public class HttpProtocolParser {
     private final BufferedReader reader;
     private HttpRequest request;
@@ -45,11 +42,11 @@ public class HttpProtocolParser {
                 HttpMethod method = HttpMethod.valueOf(reqParts[0]);
                 // HTTP/0.9 only allows GET requests
                 if (method.compareTo(HttpMethod.GET) != 0) {
-                    throw new BadRequestException("Illegl method " + method + ".");
+                    throw new HttpProtocolException("Illegl method " + method + ".");
                 }
                 request.setMethod(method);
             } catch (IllegalArgumentException e) {
-                throw new BadRequestException("Unknown method " + reqParts[0] + ".");
+                throw new HttpProtocolException("Unknown method " + reqParts[0] + ".");
             }
             majorVersion = 0;
             minorVersion = 9;
@@ -60,7 +57,7 @@ public class HttpProtocolParser {
                 HttpMethod method = HttpMethod.valueOf(reqParts[0]);
                 request.setMethod(method);
             } catch (IllegalArgumentException e) {
-                throw new BadRequestException("Unknown method " + reqParts[0] + ".");
+                throw new HttpProtocolException("Unknown method " + reqParts[0] + ".");
             }
             Matcher m = Pattern.compile("HTTP/(\\d+).(\\d+)").matcher(reqParts[2]);
             if (m.matches()) {
@@ -68,17 +65,17 @@ public class HttpProtocolParser {
                 minorVersion = Integer.parseInt(m.group(2));
                 request.setProtocol(String.format("HTTP/" + majorVersion + "." + minorVersion));
             } else {
-                throw new BadRequestException("Bad protocol.");
+                throw new HttpProtocolException("Invalid protocol " + reqParts[2] + ".");
             }
         } else {
             // Bad Request
-            throw new BadRequestException("Malformed request.");
+            throw new HttpProtocolException("Malformed request line.");
         }
 
         try {
             request.setRequestURI(new URI(reqParts[1]));
         } catch (URISyntaxException e) {
-            throw new BadRequestException("Illegal URI.");
+            throw new HttpProtocolException("Illegal URI.", e);
         }
     }
 
@@ -101,7 +98,7 @@ public class HttpProtocolParser {
 
     public void validateRequest() throws HttpProtocolException {
         if (majorVersion >= 1 && minorVersion >= 1 && request.getHeader("Host") == null) {
-            throw new BadRequestException("No Host header present for HTTP/1.1");
+            throw new HttpProtocolException("No Host header present for HTTP/1.1");
         }
     }
 }

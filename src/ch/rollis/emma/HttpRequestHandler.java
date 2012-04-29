@@ -11,8 +11,6 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ch.rollis.emma.HttpProtocolException.HttpProtocolException;
-
 
 /**
  * @author mrolli
@@ -28,9 +26,6 @@ public class HttpRequestHandler implements Runnable {
     }
     @Override
     public void run() {
-        HttpProtocolParser parser;
-        HttpRequest request;
-        HttpResponse response;
         InetAddress client;
 
         client = clientSocket.getInetAddress();
@@ -40,23 +35,15 @@ public class HttpRequestHandler implements Runnable {
             InputStream input = clientSocket.getInputStream();
             OutputStream output = clientSocket.getOutputStream();
 
-            parser = new HttpProtocolParser(input);
+            HttpProtocolParser parser = new HttpProtocolParser(input);
             try {
-                request = parser.parse();
+                HttpRequest request = parser.parse();
             } catch (HttpProtocolException e) {
                 logger.log(Level.SEVERE, "HTTP protocol violation", e);
-
-                HttpResponseStatus resStatus = HttpResponseStatus.BAD_REQUEST;
-                response = new HttpResponse(output);
-                response.setStatus(resStatus);
-                response.send("<h1>" + resStatus.getReasonPhrase() + "</h1>");
+                sendErrorResponse(output, HttpResponseStatus.BAD_REQUEST);
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "HTTP protocol violation", e);
-
-                HttpResponseStatus resStatus = HttpResponseStatus.INTERNAL_SERVER_ERROR;
-                response = new HttpResponse(output);
-                response.setStatus(resStatus);
-                response.send("<h1>" + resStatus.getReasonPhrase() + "</h1>");
+                logger.log(Level.SEVERE, "Input/Output exception", e);
+                sendErrorResponse(output, HttpResponseStatus.INTERNAL_SERVER_ERROR);
             } finally {
                 if (clientSocket != null && !clientSocket.isClosed()) {
                     clientSocket.close();
@@ -67,5 +54,12 @@ public class HttpRequestHandler implements Runnable {
         }
 
         logger.log(Level.INFO, Thread.currentThread().getName() + " ended.");
+    }
+
+    private void sendErrorResponse(OutputStream output, HttpResponseStatus resStatus)
+            throws IOException {
+        HttpResponse response = new HttpResponse(output);
+        response.setStatus(resStatus);
+        response.send("<h1>" + resStatus.getReasonPhrase() + "</h1>");
     }
 }
