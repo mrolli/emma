@@ -44,10 +44,14 @@ public class HttpResponse {
     }
 
     public void send(String body) throws IOException {
-        body = body + "\r\n";
+        byte[] rawBody = body.getBytes();
+        headers.put("Content-type", "text/html");
+        headers.put("Content-length", String.valueOf(rawBody.length));
+
         sendStatusLine();
         sendHeaders();
-        output.write(body.getBytes());
+        output.write(rawBody);
+        output.write(CRLF.getBytes());
         output.flush();
     }
 

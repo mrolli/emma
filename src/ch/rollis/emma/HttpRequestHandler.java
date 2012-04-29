@@ -38,8 +38,13 @@ public class HttpRequestHandler implements Runnable {
             HttpProtocolParser parser = new HttpProtocolParser(input);
             try {
                 HttpRequest request = parser.parse();
+                HttpResponse response = new HttpResponse(output);
+                response.setProtocol(request.getProtocol());
+                response.setStatus(HttpResponseStatus.OK);
+                response.send(request.getRequestURI().getPath() + "<br />\n"
+                        + request.getRequestURI().getQuery());
             } catch (HttpProtocolException e) {
-                logger.log(Level.SEVERE, "HTTP protocol violation", e);
+                logger.log(Level.WARNING, "HTTP protocol violation", e);
                 sendErrorResponse(output, HttpResponseStatus.BAD_REQUEST);
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Input/Output exception", e);
@@ -60,6 +65,7 @@ public class HttpRequestHandler implements Runnable {
             throws IOException {
         HttpResponse response = new HttpResponse(output);
         response.setStatus(resStatus);
-        response.send("<h1>" + resStatus.getReasonPhrase() + "</h1>");
+        response.send(String.format("<h1>%s - %s</h1>", resStatus.getCode(),
+                resStatus.getReasonPhrase()));
     }
 }
