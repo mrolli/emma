@@ -1,4 +1,4 @@
-package ch.rollis.emma;
+package ch.rollis.emma.response;
 
 public enum HttpResponseStatus {
     CONTINUE (100, "Continue"),
@@ -143,7 +143,6 @@ public enum HttpResponseStatus {
                 return HttpResponseStatus.SERVICE_UNAVAILABLE;
             case 504:
                 return HttpResponseStatus.GATEWAY_TIMEOUT;
-
             default:
                 throw new IllegalArgumentException("Unknown http status code " + code);
         }

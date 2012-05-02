@@ -1,13 +1,14 @@
-package ch.rollis.emma;
+package ch.rollis.emma.response;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.TimeZone;
+
+import ch.rollis.emma.HttpMethod;
+import ch.rollis.emma.HttpRequest;
+import ch.rollis.emma.util.DateFormatter;
 
 public class HttpResponse {
     private String protocol;
@@ -19,14 +20,13 @@ public class HttpResponse {
     private static final String CRLF = "\r\n";
     private static final String SP = " ";
 
-    public HttpResponse() {
+    HttpResponse() {
         this("HTTP/1.1");
     }
 
-    public HttpResponse(String protocol) {
+    HttpResponse(String protocol) {
         this.protocol = protocol;
         headers = new HashMap<String, String>();
-        addHeader("Server", HttpServerConfig.SERVER_TOKEN);
     }
 
     public void setProtocol(String protocol) {
@@ -90,7 +90,7 @@ public class HttpResponse {
         return null;
     }
 
-    private void addHeader(String key, String value) {
+    void addHeader(String key, String value) {
         headers.put(key, value);
     }
 
@@ -128,10 +128,7 @@ public class HttpResponse {
 
     private void sendHeaders(BufferedOutputStream out) throws IOException {
         if (!headers.containsKey("Date")) {
-            SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z",
-                    Locale.US);
-            formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-            headers.put("Date", formatter.format(new Date()));
+            headers.put("Date", DateFormatter.formatRfc1123(new Date()));
         }
         for (String field : headers.keySet()) {
             out.write(String.format("%s: %s", field, headers.get(field)).getBytes());
@@ -139,5 +136,4 @@ public class HttpResponse {
         }
         out.write(CRLF.getBytes());
     }
-
 }

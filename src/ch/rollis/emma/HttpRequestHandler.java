@@ -13,6 +13,9 @@ import java.util.logging.Logger;
 
 import ch.rollis.emma.contenthandler.ContentHandler;
 import ch.rollis.emma.contenthandler.ContentHandlerFactory;
+import ch.rollis.emma.response.HttpResponse;
+import ch.rollis.emma.response.HttpResponseFactory;
+import ch.rollis.emma.response.HttpResponseStatus;
 
 
 /**
@@ -47,12 +50,13 @@ public class HttpRequestHandler implements Runnable {
                 response.send(output);
             } catch (HttpProtocolException e) {
                 logger.log(Level.WARNING, "HTTP protocol violation", e);
-                HttpResponse response = getErrorResponse(output, HttpResponseStatus.BAD_REQUEST);
+                HttpResponse response = new HttpResponseFactory()
+                        .getResponse(HttpResponseStatus.BAD_REQUEST);
                 response.send(output);
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Input/Output exception", e);
-                HttpResponse response = getErrorResponse(output,
-                        HttpResponseStatus.INTERNAL_SERVER_ERROR);
+                HttpResponse response = new HttpResponseFactory()
+                        .getResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR);
                 response.send(output);
             } finally {
                 if (clientSocket != null && !clientSocket.isClosed()) {
@@ -64,14 +68,5 @@ public class HttpRequestHandler implements Runnable {
         }
 
         logger.log(Level.INFO, Thread.currentThread().getName() + " ended.");
-    }
-
-    private HttpResponse getErrorResponse(OutputStream output, HttpResponseStatus resStatus)
-            throws IOException {
-        HttpResponse response = new HttpResponse();
-        response.setStatus(resStatus);
-        response.setEntity(String.format("<h1>%s - %s</h1>", resStatus.getCode(),
-                resStatus.getReasonPhrase()));
-        return response;
     }
 }
