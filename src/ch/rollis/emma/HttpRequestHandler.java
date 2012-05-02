@@ -11,6 +11,9 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import ch.rollis.emma.contenthandler.ContentHandler;
+import ch.rollis.emma.contenthandler.ContentHandlerFactory;
+
 
 /**
  * @author mrolli
@@ -38,17 +41,19 @@ public class HttpRequestHandler implements Runnable {
             HttpProtocolParser parser = new HttpProtocolParser(input);
             try {
                 HttpRequest request = parser.parse();
-                HttpResponse response = new HttpResponse(output);
-                response.setRequest(request);
-                response.setStatus(HttpResponseStatus.OK);
-                response.send(request.getRequestURI().getPath() + "<br />\n"
-                        + request.getRequestURI().getQuery());
+                ContentHandlerFactory handlerFactory = new ContentHandlerFactory();
+                ContentHandler handler = handlerFactory.getHandler(request);
+                HttpResponse response = handler.process();
+                response.send(output);
             } catch (HttpProtocolException e) {
                 logger.log(Level.WARNING, "HTTP protocol violation", e);
-                sendErrorResponse(output, HttpResponseStatus.BAD_REQUEST);
+                HttpResponse response = getErrorResponse(output, HttpResponseStatus.BAD_REQUEST);
+                response.send(output);
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Input/Output exception", e);
-                sendErrorResponse(output, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+                HttpResponse response = getErrorResponse(output,
+                        HttpResponseStatus.INTERNAL_SERVER_ERROR);
+                response.send(output);
             } finally {
                 if (clientSocket != null && !clientSocket.isClosed()) {
                     clientSocket.close();
@@ -61,11 +66,12 @@ public class HttpRequestHandler implements Runnable {
         logger.log(Level.INFO, Thread.currentThread().getName() + " ended.");
     }
 
-    private void sendErrorResponse(OutputStream output, HttpResponseStatus resStatus)
+    private HttpResponse getErrorResponse(OutputStream output, HttpResponseStatus resStatus)
             throws IOException {
-        HttpResponse response = new HttpResponse(output);
+        HttpResponse response = new HttpResponse();
         response.setStatus(resStatus);
-        response.send(String.format("<h1>%s - %s</h1>", resStatus.getCode(),
+        response.setEntity(String.format("<h1>%s - %s</h1>", resStatus.getCode(),
                 resStatus.getReasonPhrase()));
+        return response;
     }
 }
