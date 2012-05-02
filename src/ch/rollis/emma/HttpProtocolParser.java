@@ -24,7 +24,7 @@ public class HttpProtocolParser {
     public HttpRequest parse() throws HttpProtocolException, IOException {
         request = new HttpRequest();
         parseRequestLine();
-        if (majorVersion >= 1 && minorVersion >= 1) {
+        if (majorVersion >= 1) {
             parseHeaders();
             // parseBody();
         }
