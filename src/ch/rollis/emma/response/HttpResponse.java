@@ -109,12 +109,13 @@ public class HttpResponse {
             addHeader("Cotnent-length", String.valueOf(entityBody.length));
         }
 
-        sendStatusLine(out);
-        sendHeaders(out);
+        if (!"HTTP/0.9".equals(getProtocol())) {
+            sendStatusLine(out);
+            sendHeaders(out);
+        }
 
         if (request == null || request.getMethod() != HttpMethod.HEAD) {
             out.write(entityBody);
-            out.write(CRLF.getBytes());
         }
         out.flush();
     }

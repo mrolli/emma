@@ -11,6 +11,7 @@ public class HttpResponseFactory {
     public HttpResponse getResponse(HttpRequest request) {
         HttpResponse response = getDefaultResponse();
         response.setProtocol(request.getProtocol());
+        response.setRequest(request);
         return response;
     }
 
@@ -25,6 +26,7 @@ public class HttpResponseFactory {
     public HttpResponse getResponse(HttpRequest request, HttpResponseStatus status) {
         HttpResponse response = getDefaultResponse();
         response.setProtocol(request.getProtocol());
+        response.setRequest(request);
         response.setStatus(status);
         response.setEntity(String.format("<h1>%s - %s</h1>", status.getCode(),
                 status.getReasonPhrase()));
