@@ -1,14 +1,14 @@
 package ch.rollis.emma.response;
 
-import ch.rollis.emma.HttpRequest;
 import ch.rollis.emma.HttpServerConfig;
+import ch.rollis.emma.request.Request;
 
 public class HttpResponseFactory {
     public HttpResponse getResponse() {
         return getDefaultResponse();
     }
 
-    public HttpResponse getResponse(HttpRequest request) {
+    public HttpResponse getResponse(Request request) {
         HttpResponse response = getDefaultResponse();
         response.setProtocol(request.getProtocol());
         response.setRequest(request);
@@ -23,7 +23,7 @@ public class HttpResponseFactory {
         return response;
     }
 
-    public HttpResponse getResponse(HttpRequest request, HttpResponseStatus status) {
+    public HttpResponse getResponse(Request request, HttpResponseStatus status) {
         HttpResponse response = getDefaultResponse();
         response.setProtocol(request.getProtocol());
         response.setRequest(request);

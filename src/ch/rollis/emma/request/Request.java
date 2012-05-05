@@ -1,16 +1,18 @@
-package ch.rollis.emma;
+package ch.rollis.emma.request;
 
 import java.net.URI;
 import java.util.HashMap;
 
+import ch.rollis.emma.HttpMethod;
 
-public class HttpRequest {
+
+public class Request {
     private String protocol;
     private HttpMethod method;
     private URI requestURI;
     private final HashMap<String, String> headers;
 
-    public HttpRequest() {
+    public Request() {
         headers = new HashMap<String, String>();
     }
 

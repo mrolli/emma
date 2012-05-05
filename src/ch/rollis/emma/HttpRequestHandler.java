@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import ch.rollis.emma.contenthandler.ContentHandler;
 import ch.rollis.emma.contenthandler.ContentHandlerFactory;
+import ch.rollis.emma.request.Request;
 import ch.rollis.emma.response.HttpResponse;
 import ch.rollis.emma.response.HttpResponseFactory;
 import ch.rollis.emma.response.HttpResponseStatus;
@@ -43,9 +44,8 @@ public class HttpRequestHandler implements Runnable {
 
             HttpProtocolParser parser = new HttpProtocolParser(input);
             try {
-                HttpRequest request = parser.parse();
-                ContentHandlerFactory handlerFactory = new ContentHandlerFactory();
-                ContentHandler handler = handlerFactory.getHandler(request);
+                Request request = parser.parse();
+                ContentHandler handler = new ContentHandlerFactory().getHandler(request);
                 HttpResponse response = handler.process();
                 response.send(output);
             } catch (HttpProtocolException e) {

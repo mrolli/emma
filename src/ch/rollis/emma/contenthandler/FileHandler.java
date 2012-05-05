@@ -6,17 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 
-import ch.rollis.emma.HttpRequest;
 import ch.rollis.emma.HttpServerConfig;
+import ch.rollis.emma.request.Request;
 import ch.rollis.emma.response.HttpResponse;
 import ch.rollis.emma.response.HttpResponseFactory;
 import ch.rollis.emma.response.HttpResponseStatus;
 import ch.rollis.emma.util.DateFormatter;
 
 public class FileHandler implements ContentHandler {
-    private final HttpRequest request;
+    private final Request request;
 
-    public FileHandler(HttpRequest request) {
+    public FileHandler(Request request) {
         this.request = request;
     }
 

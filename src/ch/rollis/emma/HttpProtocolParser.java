@@ -9,9 +9,11 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ch.rollis.emma.request.Request;
+
 public class HttpProtocolParser {
     private final BufferedReader reader;
-    private HttpRequest request;
+    private Request request;
     private int majorVersion = 0;
     private int minorVersion = 9;
 
@@ -21,8 +23,8 @@ public class HttpProtocolParser {
         reader = new BufferedReader(new InputStreamReader(input));
     }
 
-    public HttpRequest parse() throws HttpProtocolException, IOException {
-        request = new HttpRequest();
+    public Request parse() throws HttpProtocolException, IOException {
+        request = new Request();
         parseRequestLine();
         if (majorVersion >= 1) {
             parseHeaders();

@@ -7,12 +7,12 @@ import java.util.Date;
 import java.util.HashMap;
 
 import ch.rollis.emma.HttpMethod;
-import ch.rollis.emma.HttpRequest;
+import ch.rollis.emma.request.Request;
 import ch.rollis.emma.util.DateFormatter;
 
 public class HttpResponse {
     private String protocol;
-    private HttpRequest request;
+    private Request request;
     private HttpResponseStatus status;
     private final HashMap<String, String> headers;
     private byte[] entityBody;
@@ -40,11 +40,11 @@ public class HttpResponse {
         return protocol;
     }
 
-    public HttpRequest getRequest() {
+    public Request getRequest() {
         return request;
     }
 
-    public void setRequest(HttpRequest request) {
+    public void setRequest(Request request) {
         this.request = request;
     }
 
