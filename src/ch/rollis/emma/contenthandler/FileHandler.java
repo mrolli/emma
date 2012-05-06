@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import ch.rollis.emma.HttpServerConfig;
+import ch.rollis.emma.context.ServerContext;
 import ch.rollis.emma.request.Request;
 import ch.rollis.emma.response.Response;
 import ch.rollis.emma.response.ResponseFactory;
@@ -21,16 +22,16 @@ public class FileHandler implements ContentHandler {
     }
 
     @Override
-    public Response process() {
-        File rootDir, file;
+    public Response process(Request request, ServerContext context) {
+        File docRoot, file;
 
         ResponseFactory responseFacotry = new ResponseFactory();
         Response response = responseFacotry.getResponse(request);
 
         try {
-            rootDir = new File("./vhosts/default/public_html").getCanonicalFile();
+            docRoot = context.getDocumentRoot().getCanonicalFile();
 
-            file = new File(rootDir, request.getRequestURI().getPath()).getCanonicalFile();
+            file = new File(docRoot, request.getRequestURI().getPath()).getCanonicalFile();
 
             String extension = HttpServerConfig.getExtension(file);
             String contentType = HttpServerConfig.MIME_TYPES.get(extension);

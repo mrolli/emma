@@ -1,10 +1,15 @@
 package ch.rollis.emma;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import ch.rollis.emma.context.ServerContext;
+import ch.rollis.emma.context.ServerContextException;
+import ch.rollis.emma.context.ServerContextManager;
 
 /**
  * Emma - Tiny Webserver
@@ -16,11 +21,23 @@ import java.util.logging.Logger;
 public class HttpServer {
     private final int port;
     private final Logger logger;
+    private final ServerContextManager scm;
 
     public HttpServer(int port) throws HttpServerException {
         // move webserver configuration to file
         this.port = port;
         logger = Logger.getLogger("server_log");
+        scm = new ServerContextManager();
+
+        File docRoot = new File("./vhosts/default/public_html");
+        ServerContext con = new ServerContext("localhost", docRoot);
+        con.setDefaultContext(true);
+        try {
+            scm.addContext(con);
+        } catch (ServerContextException e) {
+            throw new HttpServerException("Unable to start emma", e);
+        }
+
     }
 
     public void start() throws HttpServerException {
@@ -41,8 +58,7 @@ public class HttpServer {
             Socket socket;
             try {
                 socket = serverSocket.accept();
-                Thread th = new Thread(threadGroup, new HttpRequestHandler(
-                        socket, logger));
+                Thread th = new Thread(threadGroup, new HttpRequestHandler(socket, logger, scm));
                 th.setName("Request thread " + th.getId());
                 th.start();
                 logger.log(Level.INFO, th.getName() + " started.");
