@@ -18,6 +18,7 @@ public class HttpProtocolParser {
     private int minorVersion = 9;
 
     private static final String SP = " ";
+    private static final String HT = "\t";
 
     public HttpProtocolParser(InputStream input) {
         reader = new BufferedReader(new InputStreamReader(input));
@@ -25,12 +26,21 @@ public class HttpProtocolParser {
 
     public Request parse() throws HttpProtocolException, IOException {
         request = new Request();
+
         parseRequestLine();
-        if (majorVersion >= 1) {
+
+        if (request.isFullRequest()) {
             parseHeaders();
-            // parseBody();
+
+            // do we have an entity to parse
+            String cl = request.getEntityHeader("Content-Length");
+            if (cl != null && Integer.parseInt(cl) > 0) {
+                // parseEntity();
+            }
         }
+
         validateRequest();
+
         return request;
     }
 
@@ -81,25 +91,45 @@ public class HttpProtocolParser {
         }
     }
 
-    private void parseHeaders() throws IOException {
+    private void parseHeaders() throws HttpProtocolException, IOException {
         String line = null;
+        String currentHeader = null;
+        String currentValue = null;
 
         while ((line = reader.readLine()) != null) {
-            line = line.trim();
+            // do we reach end of header section of request
             if (line.equals("")) {
                 break;
             }
+
             int colonPos = line.indexOf(":");
             if (colonPos > 0) {
-                String key = line.substring(0, colonPos);
-                String value = line.substring(colonPos + 1);
-                request.addHeader(key, value.trim());
+                // new header found - store previous if we have one
+                if (currentHeader != null) {
+                    request.setHeader(currentHeader, currentValue);
+                    currentHeader = currentValue = null;
+                }
+
+                // process new current
+                currentHeader = line.substring(0, colonPos).trim();
+                currentValue = line.substring(colonPos + 1).trim();
+            } else {
+                // extend header field
+                if (currentHeader == null || !(line.startsWith(SP) || line.startsWith(HT))) {
+                    throw new HttpProtocolException("Invalid extended header");
+                } else {
+                    currentValue = currentValue.concat(line.trim());
+                }
             }
+        }
+        // !store the last as it has not been stored previously!
+        if (currentHeader != null) {
+            request.setHeader(currentHeader, currentValue);
         }
     }
 
     public void validateRequest() throws HttpProtocolException {
-        if (majorVersion >= 1 && minorVersion >= 1 && request.getHeader("Host") == null) {
+        if (majorVersion >= 1 && minorVersion >= 1 && request.getRequestHeader("Host") == null) {
             throw new HttpProtocolException("No Host header present for HTTP/1.1");
         }
     }
