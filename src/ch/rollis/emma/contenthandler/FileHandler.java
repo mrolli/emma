@@ -8,9 +8,9 @@ import java.util.Date;
 
 import ch.rollis.emma.HttpServerConfig;
 import ch.rollis.emma.request.Request;
-import ch.rollis.emma.response.HttpResponse;
-import ch.rollis.emma.response.HttpResponseFactory;
-import ch.rollis.emma.response.HttpResponseStatus;
+import ch.rollis.emma.response.Response;
+import ch.rollis.emma.response.ResponseFactory;
+import ch.rollis.emma.response.ResponseStatus;
 import ch.rollis.emma.util.DateFormatter;
 
 public class FileHandler implements ContentHandler {
@@ -21,11 +21,11 @@ public class FileHandler implements ContentHandler {
     }
 
     @Override
-    public HttpResponse process() {
+    public Response process() {
         File rootDir, file;
 
-        HttpResponseFactory responseFacotry = new HttpResponseFactory();
-        HttpResponse response = responseFacotry.getResponse(request);
+        ResponseFactory responseFacotry = new ResponseFactory();
+        Response response = responseFacotry.getResponse(request);
 
         try {
             rootDir = new File("./vhosts/default/public_html").getCanonicalFile();
@@ -38,7 +38,7 @@ public class FileHandler implements ContentHandler {
                 contentType = "application/octet-stream";
             }
 
-            response.setStatus(HttpResponseStatus.OK);
+            response.setStatus(ResponseStatus.OK);
             response.setContentType(contentType);
             response.setContentLength(String.valueOf(file.length()));
             response.setLastModified(DateFormatter.formatRfc1123(new Date(file.lastModified())));
@@ -50,9 +50,9 @@ public class FileHandler implements ContentHandler {
             return response;
 
         } catch (FileNotFoundException e) {
-            return responseFacotry.getResponse(HttpResponseStatus.NOT_FOUND);
+            return responseFacotry.getResponse(ResponseStatus.NOT_FOUND);
         } catch (IOException e) {
-            return responseFacotry.getResponse(HttpResponseStatus.INTERNAL_SERVER_ERROR);
+            return responseFacotry.getResponse(ResponseStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

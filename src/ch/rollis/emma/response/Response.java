@@ -10,21 +10,21 @@ import ch.rollis.emma.HttpMethod;
 import ch.rollis.emma.request.Request;
 import ch.rollis.emma.util.DateFormatter;
 
-public class HttpResponse {
+public class Response {
     private String protocol;
     private Request request;
-    private HttpResponseStatus status;
+    private ResponseStatus status;
     private final HashMap<String, String> headers;
     private byte[] entityBody;
 
     private static final String CRLF = "\r\n";
     private static final String SP = " ";
 
-    HttpResponse() {
+    Response() {
         this("HTTP/1.1");
     }
 
-    HttpResponse(String protocol) {
+    Response(String protocol) {
         this.protocol = protocol;
         headers = new HashMap<String, String>();
     }
@@ -51,11 +51,11 @@ public class HttpResponse {
     /**
      * @return the status
      */
-    public HttpResponseStatus getStatus() {
+    public ResponseStatus getStatus() {
         return status;
     }
 
-    public void setStatus(HttpResponseStatus status) {
+    public void setStatus(ResponseStatus status) {
         this.status = status;
     }
 

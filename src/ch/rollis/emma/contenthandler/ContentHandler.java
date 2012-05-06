@@ -2,8 +2,8 @@ package ch.rollis.emma.contenthandler;
 
 import java.io.IOException;
 
-import ch.rollis.emma.response.HttpResponse;
+import ch.rollis.emma.response.Response;
 
 public interface ContentHandler {
-    public HttpResponse process() throws IOException;
+    public Response process() throws IOException;
 }

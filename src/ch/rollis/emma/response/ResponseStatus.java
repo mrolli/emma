@@ -1,6 +1,6 @@
 package ch.rollis.emma.response;
 
-public enum HttpResponseStatus {
+public enum ResponseStatus {
     CONTINUE (100, "Continue"),
     SWITCHING_PROTOCOLS (101, "Switching Protocols"),
     OK (200, "OK"),
@@ -46,7 +46,7 @@ public enum HttpResponseStatus {
     private final int code;
     private final String reasonPhrase;
 
-    HttpResponseStatus(int code, String reasonPhrase) {
+    ResponseStatus(int code, String reasonPhrase) {
         this.code = code;
         this.reasonPhrase = reasonPhrase;
     }
@@ -59,90 +59,90 @@ public enum HttpResponseStatus {
         return reasonPhrase;
     }
 
-    public static HttpResponseStatus evaluateCode(int code) {
+    public static ResponseStatus evaluateCode(int code) {
         switch (code) {
             case 200:
-                return HttpResponseStatus.OK;
+                return ResponseStatus.OK;
             case 400:
-                return HttpResponseStatus.BAD_REQUEST;
+                return ResponseStatus.BAD_REQUEST;
             case 403:
-                return HttpResponseStatus.FORBIDDEN;
+                return ResponseStatus.FORBIDDEN;
             case 404:
-                return HttpResponseStatus.NOT_FOUND;
+                return ResponseStatus.NOT_FOUND;
             case 500:
-                return HttpResponseStatus.INTERNAL_SERVER_ERROR;
+                return ResponseStatus.INTERNAL_SERVER_ERROR;
             case 501:
-                return HttpResponseStatus.NOT_IMPLEMENTED;
+                return ResponseStatus.NOT_IMPLEMENTED;
             case 505:
-                return HttpResponseStatus.HTTP_VERSION_NOT_SUPPORTED;
+                return ResponseStatus.HTTP_VERSION_NOT_SUPPORTED;
             case 100:
-                return HttpResponseStatus.CONTINUE;
+                return ResponseStatus.CONTINUE;
             case 101:
-                return HttpResponseStatus.SWITCHING_PROTOCOLS;
+                return ResponseStatus.SWITCHING_PROTOCOLS;
             case 201:
-                return HttpResponseStatus.CREATED;
+                return ResponseStatus.CREATED;
             case 202:
-                return HttpResponseStatus.ACCEPTED;
+                return ResponseStatus.ACCEPTED;
             case 203:
-                return HttpResponseStatus.NON_AUTHORITATIVE_INFORMATION;
+                return ResponseStatus.NON_AUTHORITATIVE_INFORMATION;
             case 204:
-                return HttpResponseStatus.NO_CONTENT;
+                return ResponseStatus.NO_CONTENT;
             case 205:
-                return HttpResponseStatus.RESET_CONTENT;
+                return ResponseStatus.RESET_CONTENT;
             case 206:
-                return HttpResponseStatus.PARTIAL_CONTENT;
+                return ResponseStatus.PARTIAL_CONTENT;
             case 300:
-                return HttpResponseStatus.MULTIPLE_CHOICES;
+                return ResponseStatus.MULTIPLE_CHOICES;
             case 301:
-                return HttpResponseStatus.MOVED_PERMANENTLY;
+                return ResponseStatus.MOVED_PERMANENTLY;
             case 302:
-                return HttpResponseStatus.FOUND;
+                return ResponseStatus.FOUND;
             case 303:
-                return HttpResponseStatus.SEE_OTHER;
+                return ResponseStatus.SEE_OTHER;
             case 304:
-                return HttpResponseStatus.NOT_MODIFIED;
+                return ResponseStatus.NOT_MODIFIED;
             case 305:
-                return HttpResponseStatus.USE_PROXY;
+                return ResponseStatus.USE_PROXY;
             case 306:
-                return HttpResponseStatus.UNUSED;
+                return ResponseStatus.UNUSED;
             case 307:
-                return HttpResponseStatus.TEMPORARY_REDIRECT;
+                return ResponseStatus.TEMPORARY_REDIRECT;
             case 401:
-                return HttpResponseStatus.UNAUTHORIZED;
+                return ResponseStatus.UNAUTHORIZED;
             case 402:
-                return HttpResponseStatus.PAYMENT_REQUIRED;
+                return ResponseStatus.PAYMENT_REQUIRED;
             case 405:
-                return HttpResponseStatus.METHOD_NOT_ALLOWED;
+                return ResponseStatus.METHOD_NOT_ALLOWED;
             case 406:
-                return HttpResponseStatus.NOT_ACCEPTABLE;
+                return ResponseStatus.NOT_ACCEPTABLE;
             case 407:
-                return HttpResponseStatus.PROXY_AUTHENTICATION_REQUIRED;
+                return ResponseStatus.PROXY_AUTHENTICATION_REQUIRED;
             case 408:
-                return HttpResponseStatus.REQUEST_TIMEOUT;
+                return ResponseStatus.REQUEST_TIMEOUT;
             case 409:
-                return HttpResponseStatus.CONFLICT;
+                return ResponseStatus.CONFLICT;
             case 410:
-                return HttpResponseStatus.GONE;
+                return ResponseStatus.GONE;
             case 411:
-                return HttpResponseStatus.LENGTH_REQUIRED;
+                return ResponseStatus.LENGTH_REQUIRED;
             case 412:
-                return HttpResponseStatus.PRECONDITION_FAILED;
+                return ResponseStatus.PRECONDITION_FAILED;
             case 413:
-                return HttpResponseStatus.REQUEST_ENTITY_TOO_LARGE;
+                return ResponseStatus.REQUEST_ENTITY_TOO_LARGE;
             case 414:
-                return HttpResponseStatus.REQUEST_URI_TO_LONG;
+                return ResponseStatus.REQUEST_URI_TO_LONG;
             case 415:
-                return HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE;
+                return ResponseStatus.UNSUPPORTED_MEDIA_TYPE;
             case 416:
-                return HttpResponseStatus.REQUESTED_RANGE_NOT_SATISFIABLE;
+                return ResponseStatus.REQUESTED_RANGE_NOT_SATISFIABLE;
             case 417:
-                return HttpResponseStatus.EXPECTATION_FAILED;
+                return ResponseStatus.EXPECTATION_FAILED;
             case 502:
-                return HttpResponseStatus.BAD_GATEWAY;
+                return ResponseStatus.BAD_GATEWAY;
             case 503:
-                return HttpResponseStatus.SERVICE_UNAVAILABLE;
+                return ResponseStatus.SERVICE_UNAVAILABLE;
             case 504:
-                return HttpResponseStatus.GATEWAY_TIMEOUT;
+                return ResponseStatus.GATEWAY_TIMEOUT;
             default:
                 throw new IllegalArgumentException("Unknown http status code " + code);
         }
