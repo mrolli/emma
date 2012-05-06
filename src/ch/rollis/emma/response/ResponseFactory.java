@@ -18,6 +18,7 @@ public class ResponseFactory {
     public Response getResponse(ResponseStatus status) {
         Response response = getDefaultResponse();
         response.setStatus(status);
+        response.setHeader("Content-Type", "text/html");
         response.setEntity(String.format("<h1>%s - %s</h1>", status.getCode(),
                 status.getReasonPhrase()));
         return response;
@@ -28,6 +29,7 @@ public class ResponseFactory {
         response.setProtocol(request.getProtocol());
         response.setRequest(request);
         response.setStatus(status);
+        response.setHeader("Content-Type", "text/html");
         response.setEntity(String.format("<h1>%s - %s</h1>", status.getCode(),
                 status.getReasonPhrase()));
         return response;
@@ -35,7 +37,7 @@ public class ResponseFactory {
 
     private Response getDefaultResponse() {
         Response response = new Response();
-        response.addHeader("Server", HttpServerConfig.SERVER_TOKEN);
+        response.setHeader("Server", HttpServerConfig.SERVER_TOKEN);
         return response;
     }
 }
