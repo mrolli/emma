@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
 
-import ch.rollis.emma.HttpMethod;
 import ch.rollis.emma.request.Request;
 import ch.rollis.emma.util.DateFormatter;
 
@@ -241,7 +240,7 @@ public class Response {
         }
 
         String cl = getContentLength();
-        if ((request == null || (request != null && request.getMethod() != HttpMethod.HEAD))
+        if ((request == null || (request != null && request.isHead()))
                 && cl != null
                 && Integer.parseInt(cl) > 0) {
             out.write(entityBody);

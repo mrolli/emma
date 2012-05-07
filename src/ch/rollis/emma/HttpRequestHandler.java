@@ -3,7 +3,6 @@
  */
 package ch.rollis.emma;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -66,8 +65,8 @@ public class HttpRequestHandler implements Runnable {
                     comSocket.close();
                 }
             }
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error closing socket.", e);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error in RequestHandler", e);
         }
 
         logger.log(Level.INFO, Thread.currentThread().getName() + " ended.");
