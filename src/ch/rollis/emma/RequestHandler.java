@@ -77,11 +77,14 @@ public class RequestHandler implements Runnable {
     }
 
     private void log(Logger logger, InetAddress client, Request request, Response response) {
-        String date;
+        String date = DateConverter.formatLog(new Date());
         try {
-            date = DateConverter.formatLog(DateConverter.dateFromString(response.getHeader("Date")));
+            String requestDate = response.getHeader("Date");
+            if (requestDate != null) {
+                date = DateConverter.formatLog(DateConverter.dateFromString(requestDate));
+            }
         } catch (DateConverterException e) {
-            date = DateConverter.formatLog(new Date());
+            // do nothing
         }
 
         String logformat = "%s [%s] \"%s %s %s\" %s %s";
