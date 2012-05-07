@@ -241,7 +241,8 @@ public class Response {
         }
 
         String cl = getContentLength();
-        if (request != null && request.getMethod() != HttpMethod.HEAD && cl != null
+        if ((request == null || (request != null && request.getMethod() != HttpMethod.HEAD))
+                && cl != null
                 && Integer.parseInt(cl) > 0) {
             out.write(entityBody);
         }

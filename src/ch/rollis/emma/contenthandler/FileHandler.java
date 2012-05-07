@@ -51,9 +51,9 @@ public class FileHandler implements ContentHandler {
             return response;
 
         } catch (FileNotFoundException e) {
-            return responseFacotry.getResponse(ResponseStatus.NOT_FOUND);
+            return responseFacotry.getResponse(request, ResponseStatus.NOT_FOUND);
         } catch (IOException e) {
-            return responseFacotry.getResponse(ResponseStatus.INTERNAL_SERVER_ERROR);
+            return responseFacotry.getResponse(request, ResponseStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
