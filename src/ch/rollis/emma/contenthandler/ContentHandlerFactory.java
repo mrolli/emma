@@ -4,7 +4,7 @@ import ch.rollis.emma.request.Request;
 
 public class ContentHandlerFactory {
     public ContentHandler getHandler(Request request) {
-        ContentHandler handler = new FileHandler(request);
+        ContentHandler handler = new FileHandler();
         return handler;
     }
 }

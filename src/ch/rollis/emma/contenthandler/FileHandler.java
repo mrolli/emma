@@ -15,12 +15,6 @@ import ch.rollis.emma.response.ResponseStatus;
 import ch.rollis.emma.util.DateFormatter;
 
 public class FileHandler implements ContentHandler {
-    private final Request request;
-
-    public FileHandler(Request request) {
-        this.request = request;
-    }
-
     @Override
     public Response process(Request request, ServerContext context) {
         File docRoot, file;

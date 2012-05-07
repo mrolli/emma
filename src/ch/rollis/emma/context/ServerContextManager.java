@@ -54,7 +54,7 @@ public class ServerContextManager {
 
     public ServerContext getDefaultContext() throws ServerContextException {
         if (!hasDefaultContext()) {
-            throw new ServerContextException("No default context is configure");
+            throw new ServerContextException("No default context is configured");
         }
         return contexts.get("default");
     }

@@ -55,13 +55,12 @@ public class HttpServer {
         // create a thread group for alle request handling threads
         ThreadGroup threadGroup = new ThreadGroup("HTTP Request handlers");
         while (!Thread.currentThread().isInterrupted()) {
-            Socket socket;
+            Socket comSocket;
             try {
-                socket = serverSocket.accept();
-                Thread th = new Thread(threadGroup, new HttpRequestHandler(socket, logger, scm));
+                comSocket = serverSocket.accept();
+                Thread th = new Thread(threadGroup, new HttpRequestHandler(comSocket, logger, scm));
                 th.setName("Request thread " + th.getId());
                 th.start();
-                logger.log(Level.INFO, th.getName() + " started.");
             } catch (IOException e) {
                 logger.log(Level.SEVERE, "Error proccessing client request.", e);
             }

@@ -26,25 +26,24 @@ import ch.rollis.emma.response.ResponseStatus;
  *
  */
 public class HttpRequestHandler implements Runnable {
-    private final Socket clientSocket;
+    private final Socket comSocket;
     private final ServerContextManager scm;
     private final Logger logger;
 
     public HttpRequestHandler(Socket socket, Logger logger, ServerContextManager contentManager) {
-        this.clientSocket = socket;
+        this.comSocket = socket;
         this.scm = contentManager;
         this.logger = logger;
     }
     @Override
     public void run() {
-        InetAddress client;
+        logger.log(Level.INFO, Thread.currentThread().getName() + " started.");
 
-        client = clientSocket.getInetAddress();
-        logger.log(Level.INFO, client.getCanonicalHostName() + " has connected.");
+        InetAddress client = comSocket.getInetAddress();
 
         try {
-            InputStream input = clientSocket.getInputStream();
-            OutputStream output = clientSocket.getOutputStream();
+            InputStream input = comSocket.getInputStream();
+            OutputStream output = comSocket.getOutputStream();
 
             HttpProtocolParser parser = new HttpProtocolParser(input);
             try {
@@ -63,8 +62,8 @@ public class HttpRequestHandler implements Runnable {
                 .getResponse(ResponseStatus.INTERNAL_SERVER_ERROR);
                 response.send(output);
             } finally {
-                if (clientSocket != null && !clientSocket.isClosed()) {
-                    clientSocket.close();
+                if (comSocket != null && !comSocket.isClosed()) {
+                    comSocket.close();
                 }
             }
         } catch (IOException e) {
