@@ -15,6 +15,8 @@ import ch.rollis.emma.context.ServerContextManager;
  * SocketListener objects listen on a server socket for incoming client
  * requests.
  * 
+ * 
+ * 
  * @author mrolli
  */
 public class SocketListener implements Runnable {
@@ -62,7 +64,7 @@ public class SocketListener implements Runnable {
             Socket comSocket;
             try {
                 comSocket = serverSocket.accept();
-                Thread th = new Thread(handlers, new HttpRequestHandler(comSocket, logger, scm));
+                Thread th = new Thread(handlers, new RequestHandler(comSocket, logger, scm));
                 th.setName("Request thread " + th.getId());
                 th.start();
             } catch (SocketTimeoutException e) {

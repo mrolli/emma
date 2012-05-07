@@ -27,12 +27,12 @@ import ch.rollis.emma.util.DateConverterException;
  * @author mrolli
  *
  */
-public class HttpRequestHandler implements Runnable {
+public class RequestHandler implements Runnable {
     private final Socket comSocket;
     private final ServerContextManager scm;
     private final Logger logger;
 
-    public HttpRequestHandler(Socket socket, Logger logger, ServerContextManager contextManager) {
+    public RequestHandler(Socket socket, Logger logger, ServerContextManager contextManager) {
         this.comSocket = socket;
         this.scm = contextManager;
         this.logger = logger;

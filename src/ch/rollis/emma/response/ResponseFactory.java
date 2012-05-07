@@ -1,6 +1,6 @@
 package ch.rollis.emma.response;
 
-import ch.rollis.emma.HttpServerConfig;
+import ch.rollis.emma.Emma;
 import ch.rollis.emma.request.Request;
 
 public class ResponseFactory {
@@ -19,7 +19,7 @@ public class ResponseFactory {
         Response response = getDefaultResponse();
         response.setStatus(status);
         response.setHeader("Content-Type", "text/html");
-        response.setEntity(String.format("<h1>%s - %s</h1>", status.getCode(),
+        response.setEntity(String.format("<h1>%s - %s</h1><hr/>" + Emma.VERSION, status.getCode(),
                 status.getReasonPhrase()));
         return response;
     }
@@ -30,14 +30,14 @@ public class ResponseFactory {
         response.setRequest(request);
         response.setStatus(status);
         response.setHeader("Content-Type", "text/html");
-        response.setEntity(String.format("<h1>%s - %s</h1>", status.getCode(),
+        response.setEntity(String.format("<h1>%s - %s</h1><hr/>" + Emma.VERSION, status.getCode(),
                 status.getReasonPhrase()));
         return response;
     }
 
     private Response getDefaultResponse() {
         Response response = new Response();
-        response.setHeader("Server", HttpServerConfig.SERVER_TOKEN);
+        response.setHeader("Server", Emma.SERVER_TOKEN);
         return response;
     }
 }

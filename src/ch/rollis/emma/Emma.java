@@ -11,6 +11,7 @@ import ch.rollis.emma.context.ServerContextManager;
 public class Emma {
     public static final String VERSION = "<a href=\"http://github.com/mrolli/emma\">Emma Web Server 1.0</a> - An tiny web server in Java";
     public static final String SERVER_TOKEN = "Emma/1.0";
+    public static final String[] DEFAULT_FILES = new String[] { "index.html", "index.htm" };
 
     public static void main(String[] args) {
         // prepare SSL KeyStore

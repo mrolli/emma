@@ -6,13 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 
-import ch.rollis.emma.HttpServerConfig;
 import ch.rollis.emma.context.ServerContext;
 import ch.rollis.emma.request.Request;
 import ch.rollis.emma.response.Response;
 import ch.rollis.emma.response.ResponseFactory;
 import ch.rollis.emma.response.ResponseStatus;
 import ch.rollis.emma.util.DateConverter;
+import ch.rollis.emma.util.MimeTypes;
 
 public class FileHandler implements ContentHandler {
     @Override
@@ -27,8 +27,7 @@ public class FileHandler implements ContentHandler {
 
             file = new File(docRoot, request.getRequestURI().getPath()).getCanonicalFile();
 
-            String extension = HttpServerConfig.getExtension(file);
-            String contentType = HttpServerConfig.MIME_TYPES.get(extension);
+            String contentType = MimeTypes.MIME_TYPES.get(MimeTypes.getExtension(file));
             if (contentType == null) {
                 contentType = "application/octet-stream";
             }

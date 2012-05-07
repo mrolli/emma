@@ -1,27 +1,20 @@
-package ch.rollis.emma;
+package ch.rollis.emma.util;
 
 import java.util.HashMap;
 
-public class HttpServerConfig {
-
-    private HttpServerConfig() {
-        // Prevent the default constructor from being called.
-    }
-
-    public static final String VERSION = "<a href=\"http://www.jibble.org\">Jibble Web Server 1.0</a> - An extremely small Java web server";
-    public static final String SERVER_TOKEN = "Emma/1.0";
-
-    public static final String DEFAULT_ROOT_DIRECTORY = ".";
-    public static final int DEFAULT_PORT = 80;
-
-    public static final String[] DEFAULT_FILES = new String[] { "index.html", "index.htm" };
-
-    public static final byte[] LINE_SEPARATOR = "\r\n".getBytes();
-
+public class MimeTypes {
+    /**
+     * file extension to mimetypes map
+     */
     public static final HashMap<String, String> MIME_TYPES = new HashMap<String, String>();
 
-    // Work out the filename extension. If there isn't one, we keep
-    // it as the empty string ("").
+    /**
+     * Work out the file's extension from filename. If there isn't one, we keep
+     * it as the empty string ("").
+     * 
+     * @param File
+     *            to get the extension for
+     */
     public static String getExtension(java.io.File file) {
         String extension = "";
         String filename = file.getName();
@@ -33,7 +26,6 @@ public class HttpServerConfig {
     }
 
     static {
-
         // Set up the filename extension to mime type associations.
         String ps = "application/postscript";
         MIME_TYPES.put(".ai", ps);
