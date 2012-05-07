@@ -8,14 +8,16 @@ import java.util.logging.Logger;
 import ch.rollis.emma.context.ServerContext;
 import ch.rollis.emma.context.ServerContextManager;
 
-public class EmmaRunner {
-    public static void main(String[] args) {
-        Logger logger = Logger.getLogger("server.log");
+public class Emma {
+    public static final String VERSION = "<a href=\"http://github.com/mrolli/emma\">Emma Web Server 1.0</a> - An tiny web server in Java";
+    public static final String SERVER_TOKEN = "Emma/1.0";
 
+    public static void main(String[] args) {
         // prepare SSL KeyStore
         System.setProperty("javax.net.ssl.keyStore", "emma.keystore");
         System.setProperty("javax.net.ssl.keyStorePassword", "geheim");
 
+        Logger logger = Logger.getLogger("server.log");
         logger.log(Level.INFO, "Starting emma");
 
         HashMap<Integer, Boolean> ports = new HashMap<Integer, Boolean>();
@@ -28,7 +30,6 @@ public class EmmaRunner {
         con.setDefaultContext(true);
         try {
             scm.addContext(con);
-
 
             ThreadGroup socketListeners = new ThreadGroup("Socket Listeners");
 
