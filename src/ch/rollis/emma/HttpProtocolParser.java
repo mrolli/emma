@@ -125,18 +125,20 @@ public class HttpProtocolParser {
 
     public void parseEntity() throws IOException {
         String cl = request.getHeader("Content-Length");
-        if (cl != null || Integer.parseInt(cl) == 0) {
-            int length = Integer.parseInt(cl);
-            StringBuilder sb = new StringBuilder();
-
-            while (sb.length() < length) {
-                char[] charBuffer = new char[1024];
-                reader.read(charBuffer);
-                sb.append(charBuffer);
-            }
-            request.setEntity(sb.toString());
+        if (cl == null || Integer.parseInt(cl) == 0) {
+            // no entity to parse
+            return;
         }
 
+        int length = Integer.parseInt(cl);
+        StringBuilder sb = new StringBuilder();
+
+        while (sb.length() < length) {
+            char[] charBuffer = new char[1024];
+            reader.read(charBuffer);
+            sb.append(charBuffer);
+        }
+        request.setEntity(sb.toString());
     }
 
 
