@@ -1,12 +1,13 @@
 package ch.rollis.emma.util;
 
+import java.io.File;
 import java.util.HashMap;
 
 public class MimeTypes {
     /**
      * file extension to mimetypes map
      */
-    public static final HashMap<String, String> MIME_TYPES = new HashMap<String, String>();
+    private static final HashMap<String, String> MIME_TYPES = new HashMap<String, String>();
 
     /**
      * Work out the file's extension from filename. If there isn't one, we keep
@@ -15,14 +16,21 @@ public class MimeTypes {
      * @param File
      *            to get the extension for
      */
-    public static String getExtension(java.io.File file) {
+    public static String getExtension(File file) {
+        return MimeTypes.getExtension(file.getName());
+    }
+
+    public static String getExtension(String filename) {
         String extension = "";
-        String filename = file.getName();
         int dotPos = filename.lastIndexOf(".");
         if (dotPos >= 0) {
             extension = filename.substring(dotPos);
         }
         return extension.toLowerCase();
+    }
+
+    public static String evaluate(String fileExtension) {
+        return MIME_TYPES.get(fileExtension);
     }
 
     static {

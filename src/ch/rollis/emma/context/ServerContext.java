@@ -12,6 +12,8 @@ public class ServerContext {
 
     private boolean isDefaultContext = false;
 
+    private boolean allowsIndexes = false;
+
     public ServerContext(String name, File docRoot) {
         serverName = name;
         documentRoot = docRoot;
@@ -47,8 +49,16 @@ public class ServerContext {
         return isDefaultContext;
     }
 
-    public void setDefaultContext(boolean value) {
-        isDefaultContext = value;
+    public void setDefaultContext(boolean flag) {
+        isDefaultContext = flag;
+    }
+
+    public boolean allowsIndexes() {
+        return allowsIndexes;
+    }
+
+    public void setAllowsIndexes(boolean flag) {
+        allowsIndexes = flag;
     }
 
 }

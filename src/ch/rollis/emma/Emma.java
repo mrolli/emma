@@ -29,6 +29,7 @@ public class Emma {
         File docRoot = new File("./vhosts/default/public_html");
         ServerContext con = new ServerContext("localhost", docRoot);
         con.setDefaultContext(true);
+        con.setAllowsIndexes(true);
         try {
             scm.addContext(con);
 
