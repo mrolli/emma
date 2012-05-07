@@ -4,6 +4,9 @@ import ch.rollis.emma.Emma;
 import ch.rollis.emma.request.Request;
 
 public class ResponseFactory {
+    private static final String HTML_TEMPLATE = "<html><head><title>%s</title></head>"
+            + "<body><h1>%s - %s</h1><hr/>" + Emma.VERSION + "</body></html>";
+
     public Response getResponse() {
         return getDefaultResponse();
     }
@@ -19,7 +22,7 @@ public class ResponseFactory {
         Response response = getDefaultResponse();
         response.setStatus(status);
         response.setHeader("Content-Type", "text/html");
-        response.setEntity(String.format("<h1>%s - %s</h1><hr/>" + Emma.VERSION, status.getCode(),
+        response.setEntity(String.format(HTML_TEMPLATE, status.getReasonPhrase(), status.getCode(),
                 status.getReasonPhrase()));
         return response;
     }
@@ -30,7 +33,7 @@ public class ResponseFactory {
         response.setRequest(request);
         response.setStatus(status);
         response.setHeader("Content-Type", "text/html");
-        response.setEntity(String.format("<h1>%s - %s</h1><hr/>" + Emma.VERSION, status.getCode(),
+        response.setEntity(String.format(HTML_TEMPLATE, status.getReasonPhrase(), status.getCode(),
                 status.getReasonPhrase()));
         return response;
     }
