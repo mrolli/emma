@@ -31,12 +31,7 @@ public class HttpProtocolParser {
 
         if (request.isFullRequest()) {
             parseHeaders();
-
-            // do we have an entity to parse
-            String cl = request.getHeader("Content-Length");
-            if (cl != null && Integer.parseInt(cl) > 0) {
-                // parseEntity();
-            }
+            parseEntity();
         }
 
         validateRequest();
@@ -127,6 +122,23 @@ public class HttpProtocolParser {
             request.setHeader(currentHeader, currentValue);
         }
     }
+
+    public void parseEntity() throws IOException {
+        String cl = request.getHeader("Content-Length");
+        if (cl != null || Integer.parseInt(cl) == 0) {
+            int length = Integer.parseInt(cl);
+            StringBuilder sb = new StringBuilder();
+
+            while (sb.length() < length) {
+                char[] charBuffer = new char[1024];
+                reader.read(charBuffer);
+                sb.append(charBuffer);
+            }
+            request.setEntity(sb.toString());
+        }
+
+    }
+
 
     public void validateRequest() throws HttpProtocolException {
         if (majorVersion >= 1 && minorVersion >= 1 && request.getHeader("Host") == null) {

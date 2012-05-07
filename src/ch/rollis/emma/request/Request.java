@@ -16,6 +16,7 @@ public class Request {
     private String protocol;
     private HttpMethod method;
     private URI requestURI;
+    private String entity;
     private final HashMap<String, String> headersGeneral;
     private final HashMap<String, String> headersRequest;
     private final HashMap<String, String> headersEntity;
@@ -184,5 +185,13 @@ public class Request {
         } else {
             headersEntity.put(key, value);
         }
+    }
+
+    public String getEntity() {
+        return entity;
+    }
+
+    public void setEntity(String entity) {
+        this.entity = entity;
     }
 }
