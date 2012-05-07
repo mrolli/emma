@@ -66,6 +66,51 @@ public class Request {
     }
 
     /**
+     * Check if request is a GET request.
+     * 
+     * @return true if request is GET, false otherwise
+     */
+    public boolean isGet() {
+        return method.equals(HttpMethod.GET);
+    }
+
+    /**
+     * Check if request is a POST request.
+     * 
+     * @return true if request is POST, false otherwise
+     */
+    public boolean isPost() {
+        return method.equals(HttpMethod.POST);
+    }
+
+    /**
+     * Check if request is a HEAD request.
+     * 
+     * @return true if request is HEAD, false otherwise
+     */
+    public boolean isHead() {
+        return method.equals(HttpMethod.HEAD);
+    }
+
+    /**
+     * Check if request is a PUT request.
+     * 
+     * @return true if request is PUT, false otherwise
+     */
+    public boolean isPut() {
+        return method.equals(HttpMethod.PUT);
+    }
+
+    /**
+     * Check if request is a DELETE request.
+     * 
+     * @return true if request is DELETE, false otherwise
+     */
+    public boolean isDelete() {
+        return method.equals(HttpMethod.DELETE);
+    }
+
+    /**
      * @return the requestURI
      */
     public URI getRequestURI() {
