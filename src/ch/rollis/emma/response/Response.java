@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import ch.rollis.emma.request.Request;
-import ch.rollis.emma.util.DateFormatter;
+import ch.rollis.emma.util.DateConverter;
 
 public class Response {
     /**
@@ -257,7 +257,7 @@ public class Response {
 
     private void sendGeneralHeaders(BufferedOutputStream out) throws IOException {
         if (getHeader("Date") == null) {
-            setHeader("Date", DateFormatter.formatRfc1123(new Date()));
+            setHeader("Date", DateConverter.formatRfc1123(new Date()));
         }
         for (String fieldName : headersGeneral.keySet()) {
             String fieldValue = headersGeneral.get(fieldName);

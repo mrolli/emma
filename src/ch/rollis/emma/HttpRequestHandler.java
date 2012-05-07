@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +19,8 @@ import ch.rollis.emma.request.Request;
 import ch.rollis.emma.response.Response;
 import ch.rollis.emma.response.ResponseFactory;
 import ch.rollis.emma.response.ResponseStatus;
+import ch.rollis.emma.util.DateConverter;
+import ch.rollis.emma.util.DateConverterException;
 
 
 /**
@@ -29,9 +32,9 @@ public class HttpRequestHandler implements Runnable {
     private final ServerContextManager scm;
     private final Logger logger;
 
-    public HttpRequestHandler(Socket socket, Logger logger, ServerContextManager contentManager) {
+    public HttpRequestHandler(Socket socket, Logger logger, ServerContextManager contextManager) {
         this.comSocket = socket;
-        this.scm = contentManager;
+        this.scm = contextManager;
         this.logger = logger;
     }
     @Override
@@ -51,6 +54,7 @@ public class HttpRequestHandler implements Runnable {
                 ContentHandler handler = new ContentHandlerFactory().getHandler(request);
                 Response response = handler.process(request, context);
                 response.send(output);
+                log(logger, client, request, response);
             } catch (HttpProtocolException e) {
                 logger.log(Level.WARNING, "HTTP protocol violation", e);
                 Response response = new ResponseFactory().getResponse(ResponseStatus.BAD_REQUEST);
@@ -70,5 +74,20 @@ public class HttpRequestHandler implements Runnable {
         }
 
         logger.log(Level.INFO, Thread.currentThread().getName() + " ended.");
+    }
+
+    private void log(Logger logger, InetAddress client, Request request, Response response) {
+        String date;
+        try {
+            date = DateConverter.formatLog(DateConverter.dateFromString(response.getHeader("Date")));
+        } catch (DateConverterException e) {
+            date = DateConverter.formatLog(new Date());
+        }
+
+        String logformat = "%s [%s] \"%s %s %s\" %s %s";
+        logger.log(Level.INFO, String.format(logformat, client.getHostAddress(), date,
+                request.getMethod(), request.getRequestURI().toString(),
+                request.getProtocol(), response.getStatus().getCode(), response
+                .getHeader("Content-Length")));
     }
 }

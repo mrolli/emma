@@ -12,7 +12,7 @@ import ch.rollis.emma.request.Request;
 import ch.rollis.emma.response.Response;
 import ch.rollis.emma.response.ResponseFactory;
 import ch.rollis.emma.response.ResponseStatus;
-import ch.rollis.emma.util.DateFormatter;
+import ch.rollis.emma.util.DateConverter;
 
 public class FileHandler implements ContentHandler {
     @Override
@@ -36,7 +36,7 @@ public class FileHandler implements ContentHandler {
             response.setStatus(ResponseStatus.OK);
             response.setContentType(contentType);
             response.setContentLength(String.valueOf(file.length()));
-            response.setLastModified(DateFormatter.formatRfc1123(new Date(file.lastModified())));
+            response.setLastModified(DateConverter.formatRfc1123(new Date(file.lastModified())));
 
             byte fileContent[] = new byte[(int) file.length()];
             new FileInputStream(file).read(fileContent);
