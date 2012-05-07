@@ -240,7 +240,7 @@ public class Response {
         }
 
         String cl = getContentLength();
-        if ((request == null || (request != null && request.isHead()))
+        if ((request == null || (request != null && !request.isHead()))
                 && cl != null
                 && Integer.parseInt(cl) > 0) {
             out.write(entityBody);
