@@ -152,60 +152,16 @@ public class Request {
      *            Header field to retrieve the value for
      * @return Value of header field
      */
-    public String getGeneralHeader(String key) {
+    public String getHeader(String key) {
         key = key.toUpperCase();
-        return headersGeneral.get(key);
-    }
-
-    /**
-     * Returns the all general headers.
-     * 
-     * @return Map of general headers and values
-     */
-    public HashMap<String, String> getGeneralHeaders() {
-        return (HashMap<String, String>) headersGeneral.clone();
-    }
-
-    /**
-     * Returns the value of a request header field.
-     * 
-     * @param key
-     *            Header field to retrieve the value for
-     * @return Value of header field
-     */
-    public String getRequestHeader(String key) {
-        key = key.toUpperCase();
-        return headersRequest.get(key);
-    }
-
-    /**
-     * Returns the all request headers.
-     * 
-     * @return Map of request headers and values
-     */
-    public HashMap<String, String> getRequestHeaders() {
-        return (HashMap<String, String>) headersRequest.clone();
-    }
-
-    /**
-     * Returns the value of an entity header field.
-     * 
-     * @param key
-     *            Header field to retrieve the value for
-     * @return Value of header field
-     */
-    public String getEntityHeader(String key) {
-        key = key.toUpperCase();
-        return headersEntity.get(key);
-    }
-
-    /**
-     * Returns the entity headers.
-     * 
-     * @return Map of entity headers and values
-     */
-    public HashMap<String, String> getEntityHeaders() {
-        return (HashMap<String, String>) headersEntity.clone();
+        if (headersGeneral.containsKey(key)) {
+            return headersGeneral.get(key);
+        } else if (headersRequest.containsKey(key)) {
+            return headersRequest.get(key);
+        } else if (headersEntity.containsKey(key)) {
+            return headersEntity.get(key);
+        }
+        return null;
     }
 
     /**

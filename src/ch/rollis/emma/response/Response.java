@@ -107,11 +107,6 @@ public class Response {
      */
     private static final String CRLF = "\r\n";
 
-    /**
-     * A horizontal tab; rfc1945
-     */
-    private static final String HT = "\t";
-
     Response() {
         this("HTTP/1.1");
     }
@@ -175,7 +170,7 @@ public class Response {
     }
 
     /**
-     * Returns the value of a general header field.
+     * Returns the value of a header field.
      * 
      * @param key
      *            Header field to retrieve the value for

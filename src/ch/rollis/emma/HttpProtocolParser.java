@@ -33,7 +33,7 @@ public class HttpProtocolParser {
             parseHeaders();
 
             // do we have an entity to parse
-            String cl = request.getEntityHeader("Content-Length");
+            String cl = request.getHeader("Content-Length");
             if (cl != null && Integer.parseInt(cl) > 0) {
                 // parseEntity();
             }
@@ -129,7 +129,7 @@ public class HttpProtocolParser {
     }
 
     public void validateRequest() throws HttpProtocolException {
-        if (majorVersion >= 1 && minorVersion >= 1 && request.getRequestHeader("Host") == null) {
+        if (majorVersion >= 1 && minorVersion >= 1 && request.getHeader("Host") == null) {
             throw new HttpProtocolException("No Host header present for HTTP/1.1");
         }
     }

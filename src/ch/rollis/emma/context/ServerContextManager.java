@@ -14,7 +14,7 @@ public class ServerContextManager {
     }
 
     public ServerContext getContext(Request request) throws ServerContextException {
-        String host = request.getRequestHeader("Host");
+        String host = request.getHeader("Host");
         if (contexts.containsKey(host)) {
             return contexts.get(host);
         } else {
