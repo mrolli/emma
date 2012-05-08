@@ -7,62 +7,39 @@ import java.net.SocketTimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.net.ssl.SSLServerSocketFactory;
-
 import ch.rollis.emma.context.ServerContextManager;
 
 /**
  * SocketListener objects listen on a server socket for incoming client
  * requests.
  * 
- * 
- * 
  * @author mrolli
  */
 public class SocketListener implements Runnable {
+    private final ServerSocket serverSocket;
     private final int port;
     private final Logger logger;
     private final ServerContextManager scm;
-    private boolean sslSecured = false;
 
-    public SocketListener(int port, ServerContextManager scm, Logger logger) {
-        // move webserver configuration to file
-        this.port = port;
+    public SocketListener(ServerSocket socket, ServerContextManager scm, Logger logger) {
+        // move web server configuration to file
+        this.serverSocket = socket;
+        this.port = socket.getLocalPort();
         this.scm = scm;
         this.logger = logger;
     }
 
-    public void setSecured(boolean flag) {
-        sslSecured = flag;
-    }
-
-    public boolean isSecured() {
-        return sslSecured;
-    }
-
     @Override
     public void run() {
-        ServerSocket serverSocket = null;
-
-        logger.log(Level.INFO, "Now listening on port " + port);
-
-        try {
-            if (isSecured()) {
-                serverSocket = SSLServerSocketFactory.getDefault().createServerSocket(port);
-            } else {
-                serverSocket = new ServerSocket(port);
-            }
-            serverSocket.setSoTimeout(1000);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Unable to open server socket on port " + port + ".", e);
-        }
-
         // create a thread group for all request handling threads
         ThreadGroup handlers = new ThreadGroup("HTTP Request handlers on port " + port);
 
+        logger.log(Level.INFO, "Now listening on port " + port);
         while (!Thread.currentThread().isInterrupted()) {
             Socket comSocket;
             try {
+                // setup a socket timeout to be able to react on interrupt()
+                serverSocket.setSoTimeout(1000);
                 comSocket = serverSocket.accept();
                 Thread th = new Thread(handlers, new RequestHandler(comSocket, logger, scm));
                 th.setName("Request thread " + th.getId());
@@ -75,6 +52,7 @@ public class SocketListener implements Runnable {
             }
         }
 
+        // thread was interrupted, cleanup
         try {
             Thread[] threads = new Thread[handlers.activeCount()];
             handlers.enumerate(threads);

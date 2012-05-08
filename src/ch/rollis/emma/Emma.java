@@ -35,9 +35,9 @@ public class Emma {
 
             ThreadGroup socketListeners = new ThreadGroup("Socket Listeners");
 
+            SocketListenerFactory slf = new SocketListenerFactory(scm, logger);
             for (int port : ports.keySet()) {
-                SocketListener sl = new SocketListener(port, scm, logger);
-                sl.setSecured(ports.get(port));
+                SocketListener sl = slf.getListener(port, ports.get(port));
                 Thread t = new Thread(socketListeners, sl, "SocketListener on port " + port);
                 t.start();
             }
