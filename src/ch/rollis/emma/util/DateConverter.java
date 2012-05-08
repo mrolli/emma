@@ -18,7 +18,7 @@ public class DateConverter {
         rfc1123 = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         rfc1123.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-        logFormat = new SimpleDateFormat("dd.MM.yyyy");
+        logFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
     }
 
     public static String formatRfc1123(Date date) {
