@@ -26,11 +26,6 @@ public class FileHandler implements ContentHandler {
 
             String uri = request.getRequestURI().getPath();
 
-            // Prohibit getting out of current directory
-            if ( uri.startsWith( ".." ) || uri.endsWith( ".." ) || uri.indexOf( "../" ) >= 0 ) {
-                return responseFacotry.getResponse(request, ResponseStatus.FORBIDDEN);
-            }
-
             file = new File(docRoot, uri);
             if (!file.exists()) {
                 return responseFacotry.getResponse(request, ResponseStatus.NOT_FOUND);
@@ -113,7 +108,7 @@ public class FileHandler implements ContentHandler {
 
                 if (curFile.isDirectory()) {
                     files[i] += "/";
-                    msg += "<img src=\"/images/folder.gif\" alt=\"[DIR]\" width=\"20\" height=\"22\"> ";
+                    msg += "<img src=\"/images/icons/folder.gif\" alt=\"[DIR]\" width=\"20\" height=\"22\"> ";
                 } else {
                     String mimetype = MimeTypes.evaluate(MimeTypes.getExtension(files[i]));
                     if (mimetype.startsWith("image")) {
