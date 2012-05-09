@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding=".gitkeep" kind="src" path="src"/>
-	<classpathentry excluding=".gitkeep" kind="src" path="conf"/>
-	<classpathentry excluding=".gitkeep" kind="src" path="tests"/>
-	<classpathentry exported="true" kind="lib" path="lib/snakeyaml-1.10.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -40,7 +40,7 @@ public class ServerContextManager {
             contexts.put(alias, context);
         }
 
-        if (context.isDefaultContext()) {
+        if (context.isDefault()) {
             if (hasDefaultContext()) {
                 throw new ServerContextException("Default context is already registered");
             }

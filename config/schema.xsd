@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:jxb="http://java.sun.com/xml/ns/jaxb" jxb:version="2.0" elementFormDefault="qualified">
+    <xs:element name="emma">
+        <xs:annotation>
+            <xs:appinfo>
+                <jxb:class name="Configuration"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="keyStore">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="path" type="xs:string"/>
+                            <xs:element name="password" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="listen">
+                    <xs:annotation>
+                        <xs:appinfo>
+                            <jxb:property name="ports"/>
+                        </xs:appinfo>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                            <xs:element name="port">
+                                <xs:complexType>
+                                    <xs:attribute name="number" type="xs:int" use="required"/>
+                                    <xs:attribute name="secured" type="xs:boolean" default="false"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="virtualHosts">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="1" maxOccurs="unbounded"> 
+                            <xs:element name="virtualHost" type="virtualHostType"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <!-- Definition of a course -->
+    <xs:complexType name="virtualHostType">
+        <xs:annotation>
+            <xs:appinfo>
+                <jxb:class name="VirtualHost"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="aliases">
+                <xs:complexType>
+                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                        <xs:element name="alias" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="documentRoot" type="xs:string"/>
+            <xs:element name="logFilename" type="xs:string"/>
+            <xs:element name="isDefault" type="xs:boolean" default="false"/>
+            <xs:element name="allowIndexes" type="xs:boolean" default="false"/>
+        </xs:sequence>
+        <xs:attribute name="serverName" type="xs:string" use="required"/>
+    </xs:complexType>
+</xs:schema>

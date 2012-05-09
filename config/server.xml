@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<emma xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="schema.xsd">
+    
+    <keyStore>
+        <path>./config/emma.keystore</path>
+        <password>geheim</password>
+    </keyStore>
+    <listen>
+        <port number="8080" />
+        <port number="8443" secured="true" />
+    </listen>
+    <virtualHosts>
+        <virtualHost serverName="localhost">
+            <aliases>
+                <alias>www.localhost</alias>
+            </aliases>
+            <documentRoot>./vhosts/default/public_html</documentRoot>
+            <logFilename>./vhosts/default/log/access.log</logFilename>
+            <isDefault>true</isDefault>
+            <allowIndexes>true</allowIndexes>
+        </virtualHost>
+        <virtualHost serverName="test.localhost">
+            <aliases/>
+            <documentRoot>./vhosts/test/public_html</documentRoot>
+            <logFilename>./vhosts/test/log/access.log</logFilename>
+            <isDefault>false</isDefault>
+            <allowIndexes>false</allowIndexes>
+        </virtualHost>
+    </virtualHosts>
+</emma>

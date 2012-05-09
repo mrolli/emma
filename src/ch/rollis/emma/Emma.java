@@ -1,10 +1,21 @@
 package ch.rollis.emma;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.util.HashMap;
+import java.io.InputStreamReader;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
+import ch.rollis.emma.configuration.Configuration;
+import ch.rollis.emma.configuration.Configuration.Listen.Port;
+import ch.rollis.emma.configuration.VirtualHost;
 import ch.rollis.emma.context.ServerContext;
 import ch.rollis.emma.context.ServerContextManager;
 
@@ -14,36 +25,46 @@ public class Emma {
     public static final String[] DEFAULT_FILES = new String[] { "index.html", "index.htm" };
 
     public static void main(String[] args) {
-        // prepare SSL KeyStore
-        System.setProperty("javax.net.ssl.keyStore", "emma.keystore");
-        System.setProperty("javax.net.ssl.keyStorePassword", "geheim");
+        String configFile = "./config/server.xml";
 
         Logger logger = Logger.getLogger("server.log");
         logger.log(Level.INFO, "Starting emma");
 
-        HashMap<Integer, Boolean> ports = new HashMap<Integer, Boolean>();
-        ports.put(8080, false);
-        ports.put(8443, true);
-
-        ServerContextManager scm = new ServerContextManager();
-        File docRoot = new File("./vhosts/default/public_html");
-        ServerContext con = new ServerContext("localhost", docRoot);
-        con.setDefaultContext(true);
-        con.setAllowsIndexes(true);
         try {
-            scm.addContext(con);
+            if (args.length > 0) {
+                configFile = args[0];
+            }
+            Configuration config = loadConfiguration(configFile);
 
+            // prepare SSL KeyStore
+            Configuration.KeyStore keyStore = config.getKeyStore();
+            System.setProperty("javax.net.ssl.keyStore", keyStore.getPath());
+            System.setProperty("javax.net.ssl.keyStorePassword", keyStore.getPassword());
+
+            // prepare ServerContextManager
+            ServerContextManager scm = new ServerContextManager();
+            List<VirtualHost> vhosts = config.getVirtualHosts();
+            for (VirtualHost vhost : vhosts) {
+                scm.addContext(ServerContext.create(vhost));
+            }
+
+            // setup SocketListeners
             ThreadGroup socketListeners = new ThreadGroup("Socket Listeners");
-
             SocketListenerFactory slf = new SocketListenerFactory(scm, logger);
-            for (int port : ports.keySet()) {
-                SocketListener sl = slf.getListener(port, ports.get(port));
+            List<Port> ports = config.getPorts();
+            for (Port port : ports) {
+                SocketListener sl = slf.getListener(port.getNumber(), port.isSecured());
                 Thread t = new Thread(socketListeners, sl, "SocketListener on port " + port);
                 t.start();
             }
 
-            while (!Thread.currentThread().isInterrupted()) {
-                Thread.sleep(1000);
+            // wait for program termination
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            while (true) {
+                String cmd = in.readLine();
+                if (cmd.equals("quit") || cmd.equals("exit") || cmd.equals("shutdown")) {
+                    break;
+                }
             }
 
             logger.log(Level.INFO, "Stopping emma");
@@ -54,12 +75,27 @@ public class Emma {
                 t.interrupt();
                 t.join();
             }
+
+            logger.log(Level.INFO, "Exiting emma");
+            System.exit(0);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
 
-        logger.log(Level.INFO, "Exiting emma");
-        System.exit(0);
+    }
+
+    public static Configuration loadConfiguration(String configFile) throws Exception {
+        try{
+            JAXBContext jc = JAXBContext.newInstance(Configuration.class);
+            Unmarshaller unmarshaller = jc.createUnmarshaller();
+            SchemaFactory schemaFactory = SchemaFactory
+                    .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = schemaFactory.newSchema(new File("./config/schema.xsd"));
+            unmarshaller.setSchema(schema);
+            return (Configuration) unmarshaller.unmarshal(new File(configFile));
+        } catch (Exception e) {
+            throw new Exception("Unable to start Emma due to a configuration error", e);
+        }
     }
 }

@@ -54,7 +54,7 @@ public class RequestHandler implements Runnable {
                 ContentHandler handler = new ContentHandlerFactory().getHandler(request);
                 Response response = handler.process(request, context);
                 response.send(output);
-                log(logger, client, request, response);
+                context.log(Level.INFO, getLogMessage(client, request, response));
             } catch (HttpProtocolException e) {
                 logger.log(Level.WARNING, "HTTP protocol violation", e);
                 Response response = new ResponseFactory().getResponse(ResponseStatus.BAD_REQUEST);
@@ -76,7 +76,7 @@ public class RequestHandler implements Runnable {
         logger.log(Level.INFO, Thread.currentThread().getName() + " ended.");
     }
 
-    private void log(Logger logger, InetAddress client, Request request, Response response) {
+    private String getLogMessage(InetAddress client, Request request, Response response) {
         String date = DateConverter.formatLog(new Date());
         try {
             String requestDate = response.getHeader("Date");
@@ -88,9 +88,9 @@ public class RequestHandler implements Runnable {
         }
 
         String logformat = "%s [%s] \"%s %s %s\" %s %s";
-        logger.log(Level.INFO, String.format(logformat, client.getHostAddress(), date,
+        return String.format(logformat, client.getHostAddress(), date,
                 request.getMethod(), request.getRequestURI().toString(),
                 request.getProtocol(), response.getStatus().getCode(), response
-                .getHeader("Content-Length")));
+                .getHeader("Content-Length"));
     }
 }
