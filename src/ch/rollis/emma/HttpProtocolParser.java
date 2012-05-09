@@ -19,6 +19,7 @@ public class HttpProtocolParser {
 
     private static final String SP = " ";
     private static final String HT = "\t";
+    private static final String CRLF = "\r\n";
 
     public HttpProtocolParser(InputStream input) {
         reader = new BufferedReader(new InputStreamReader(input));
@@ -41,7 +42,7 @@ public class HttpProtocolParser {
 
     private void parseRequestLine() throws HttpProtocolException, IOException {
         String reqLine = reader.readLine();
-        String[] reqParts = reqLine.split(SP);
+        String[] reqParts = reqLine.split(SP + "+");
 
         if (reqParts.length == 2) {
             // Simple-Request
@@ -113,7 +114,7 @@ public class HttpProtocolParser {
                 if (currentHeader == null || !(line.startsWith(SP) || line.startsWith(HT))) {
                     throw new HttpProtocolException("Invalid extended header");
                 } else {
-                    currentValue = currentValue.concat(line.trim());
+                    currentValue = currentValue.concat(CRLF + line.trim());
                 }
             }
         }
@@ -123,7 +124,7 @@ public class HttpProtocolParser {
         }
     }
 
-    public void parseEntity() throws IOException {
+    private void parseEntity() throws IOException {
         String cl = request.getHeader("Content-Length");
         if (cl == null || Integer.parseInt(cl) == 0) {
             // no entity to parse
