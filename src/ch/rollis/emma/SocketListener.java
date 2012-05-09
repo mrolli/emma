@@ -59,6 +59,14 @@ public class SocketListener implements Runnable {
             for (Thread t : threads) {
                 t.interrupt();
             }
+
+            for (Thread t : threads) {
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    // no action needed here
+                }
+            }
             serverSocket.close();
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error closing server socket.", e);

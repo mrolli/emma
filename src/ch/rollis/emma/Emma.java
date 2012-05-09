@@ -73,6 +73,9 @@ public class Emma {
             socketListeners.enumerate(threads);
             for (Thread t : threads) {
                 t.interrupt();
+            }
+
+            for (Thread t : threads) {
                 t.join();
             }
 
