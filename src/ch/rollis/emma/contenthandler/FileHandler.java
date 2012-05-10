@@ -22,6 +22,10 @@ public class FileHandler implements ContentHandler {
         ResponseFactory responseFacotry = new ResponseFactory();
 
         try {
+            if (!(request.isGet() || request.isHead())) {
+                return responseFacotry.getResponse(request, ResponseStatus.NOT_IMPLEMENTED);
+            }
+
             docRoot = context.getDocumentRoot().getCanonicalFile();
 
             String uri = request.getRequestURI().getPath();

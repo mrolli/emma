@@ -150,10 +150,7 @@ public class HttpProtocolParser {
 
         // check methods
         if (majorVersion >= 1) {
-            HttpMethod method = request.getMethod();
-            if (minorVersion == 0
-                    && !(method.equals(HttpMethod.GET) || method.equals(HttpMethod.POST) || method
-                            .equals(HttpMethod.HEAD))) {
+            if (minorVersion == 0 && !(request.isGet() || request.isPost() || request.isHead())) {
                 throw new HttpProtocolException("Invalid method for protcol "
                         + request.getProtocol());
             }
