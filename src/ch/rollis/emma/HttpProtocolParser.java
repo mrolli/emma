@@ -145,7 +145,18 @@ public class HttpProtocolParser {
 
     public void validateRequest() throws HttpProtocolException {
         if (majorVersion >= 1 && minorVersion >= 1 && request.getHeader("Host") == null) {
-            throw new HttpProtocolException("No Host header present for HTTP/1.1");
+            throw new HttpProtocolException("No Host header present.");
+        }
+
+        // check methods
+        if (majorVersion >= 1) {
+            HttpMethod method = request.getMethod();
+            if (minorVersion == 0
+                    && !(method.equals(HttpMethod.GET) || method.equals(HttpMethod.POST) || method
+                            .equals(HttpMethod.HEAD))) {
+                throw new HttpProtocolException("Invalid method for protcol "
+                        + request.getProtocol());
+            }
         }
     }
 }
