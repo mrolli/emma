@@ -33,9 +33,18 @@ public class FileHandler implements ContentHandler {
 
             if (file.isDirectory()) {
                 if (!uri.endsWith("/")) {
+                    StringBuilder location = new StringBuilder();
+                    if (request.isSslSecured()) {
+                        location.append("https://");
+                    } else {
+                        location.append("http://");
+                    }
+                    location.append(context.getServerName());
+                    location.append(":" + request.getPort());
+                    location.append(uri + "/");
                     Response response = responseFacotry.getResponse(request,
                             ResponseStatus.SEE_OTHER);
-                    response.setHeader("Location", uri + "/");
+                    response.setHeader("Location", location.toString());
                     return response;
                 }
             }

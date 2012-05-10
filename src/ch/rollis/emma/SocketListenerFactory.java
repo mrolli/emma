@@ -26,7 +26,7 @@ public class SocketListenerFactory {
             } else {
                 socket = new ServerSocket(port);
             }
-            return new SocketListener(socket, scm, logger);
+            return new SocketListener(socket, sslSecured, scm, logger);
         } catch (IOException e) {
             throw new Exception("Unable to open server socket on port " + port + ".", e);
         }

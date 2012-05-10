@@ -20,6 +20,8 @@ public class Request {
     private final HashMap<String, String> headersGeneral;
     private final HashMap<String, String> headersRequest;
     private final HashMap<String, String> headersEntity;
+    private int port;
+    private boolean sslSecured = false;
 
     public Request() {
         headersGeneral = new HashMap<String, String>();
@@ -193,5 +195,28 @@ public class Request {
 
     public void setEntity(String entity) {
         this.entity = entity;
+    }
+
+    public boolean isSslSecured() {
+        return sslSecured;
+    }
+
+    public void setIsSslSecured(boolean flag) {
+        sslSecured = flag;
+    }
+
+    /**
+     * @return the port
+     */
+    public int getPort() {
+        return port;
+    }
+
+    /**
+     * @param port
+     *            the port to set
+     */
+    public void setPort(int port) {
+        this.port = port;
     }
 }

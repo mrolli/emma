@@ -18,13 +18,16 @@ import ch.rollis.emma.context.ServerContextManager;
 public class SocketListener implements Runnable {
     private final ServerSocket serverSocket;
     private final int port;
+    private final boolean sslSecured;
     private final Logger logger;
     private final ServerContextManager scm;
 
-    public SocketListener(ServerSocket socket, ServerContextManager scm, Logger logger) {
+    public SocketListener(ServerSocket socket, boolean sslSecured, ServerContextManager scm,
+            Logger logger) {
         // move web server configuration to file
         this.serverSocket = socket;
         this.port = socket.getLocalPort();
+        this.sslSecured = sslSecured;
         this.scm = scm;
         this.logger = logger;
     }
@@ -41,7 +44,8 @@ public class SocketListener implements Runnable {
                 // setup a socket timeout to be able to react on interrupt()
                 serverSocket.setSoTimeout(1000);
                 comSocket = serverSocket.accept();
-                Thread th = new Thread(handlers, new RequestHandler(comSocket, logger, scm));
+                Thread th = new Thread(handlers, new RequestHandler(comSocket, sslSecured, logger,
+                        scm));
                 th.setName("Request thread " + th.getId());
                 th.start();
             } catch (SocketTimeoutException e) {

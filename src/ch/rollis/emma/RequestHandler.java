@@ -29,11 +29,14 @@ import ch.rollis.emma.util.DateConverterException;
  */
 public class RequestHandler implements Runnable {
     private final Socket comSocket;
+    private final boolean sslSecured;
     private final ServerContextManager scm;
     private final Logger logger;
 
-    public RequestHandler(Socket socket, Logger logger, ServerContextManager contextManager) {
+    public RequestHandler(Socket socket, boolean sslSecured, Logger logger,
+            ServerContextManager contextManager) {
         this.comSocket = socket;
+        this.sslSecured = sslSecured;
         this.scm = contextManager;
         this.logger = logger;
     }
@@ -50,6 +53,8 @@ public class RequestHandler implements Runnable {
             HttpProtocolParser parser = new HttpProtocolParser(input);
             try {
                 Request request = parser.parse();
+                request.setPort(comSocket.getLocalPort());
+                request.setIsSslSecured(sslSecured);
                 ServerContext context = scm.getContext(request);
                 ContentHandler handler = new ContentHandlerFactory().getHandler(request);
                 Response response = handler.process(request, context);
