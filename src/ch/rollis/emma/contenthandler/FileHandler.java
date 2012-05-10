@@ -43,7 +43,7 @@ public class FileHandler implements ContentHandler {
                     location.append(":" + request.getPort());
                     location.append(uri + "/");
                     Response response = responseFacotry.getResponse(request,
-                            ResponseStatus.SEE_OTHER);
+                            ResponseStatus.MOVED_PERMANENTLY);
                     response.setHeader("Location", location.toString());
                     return response;
                 }
