@@ -103,8 +103,7 @@ public class ServerContext {
                 logger.addHandler(handler);
                 context.setLogger(logger);
             } catch (IOException e) {
-                throw new ServerContextException("Error with log file."
-                        + vhost.getServerName());
+                throw new ServerContextException("Error with log file." + vhost.getServerName(), e);
             }
         }
 

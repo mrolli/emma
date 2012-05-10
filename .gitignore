@@ -7,4 +7,4 @@
 # Directories
 /bin/*
 /vhosts/default/public_html/doc/*
-/vhosts/*/log/*.log
+/vhosts/*/log/*
