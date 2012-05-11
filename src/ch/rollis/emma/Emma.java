@@ -19,12 +19,56 @@ import ch.rollis.emma.configuration.VirtualHost;
 import ch.rollis.emma.context.ServerContext;
 import ch.rollis.emma.context.ServerContextManager;
 
-public class Emma {
-    public static final String VERSION = "<a href=\"http://github.com/mrolli/emma\">Emma Web Server 1.0</a> - An tiny web server in Java";
-    public static final String SERVER_TOKEN = "Emma/1.0";
-    public static final String[] DEFAULT_FILES = new String[] { "index.html", "index.htm" };
+/**
+ * Main class of Emma web server.
+ * <p>
+ * The main class of Emma web server provides the application's main method and
+ * is responsible for loading the web server configuration from an xml
+ * configuration file.
+ * 
+ * @author mrolli
+ */
+public final class Emma {
+    /**
+     * Emma version string for generated HTML output.
+     */
+    public static final String VERSION = "<a href=\"http://github.com/mrolli/emma\">"
+            + "Emma Web Server 1.0</a> - An tiny web server in Java";
 
-    public static void main(String[] args) {
+    /**
+     * Emma server token used in Server response header.
+     */
+    public static final String SERVER_TOKEN = "Emma/1.0";
+
+    /**
+     * Filenames of default files to be served if available in case
+     * a directory is requested.
+     */
+    public static final String[] DEFAULT_FILES = new String[] {"index.html", "index.htm"};
+
+    /**
+     * Private default constructor to forbid class instantiation.
+     */
+    private Emma() {
+    }
+
+    /**
+     * Emma's main method to warm up the application.
+     * <p>
+     * Responsibilities include setting up dependencies, starting socket
+     * listeners
+     * threads for each TcP port configured and finally waiting for a shutdown
+     * signal (shutdown, exit, quit) on stdin and if requested to finally
+     * shutdown
+     * the application by interrupting all socket listener threads.
+     * <p>
+     * Command line arguments allowed is an alternative configuration filename
+     * to parse.
+     *
+     * @param args
+     *            Array of cli arguments
+     */
+    public static void main(final String[] args) {
         String configFile = "./config/server.xml";
 
         Logger logger = Logger.getLogger("server.log");
@@ -88,8 +132,19 @@ public class Emma {
 
     }
 
-    public static Configuration loadConfiguration(String configFile) throws Exception {
-        try{
+    /**
+     * Returns a configuration object after reading it in from file and parsing
+     * it in with JAXB using a defined schema.
+     *
+     * @param configFile
+     *            Configuration filename
+     * @return Configuration object built
+     * @throws Exception
+     *             in case the configuration file cannot be parsed or is not
+     *             available
+     */
+    public static Configuration loadConfiguration(final String configFile) throws Exception {
+        try {
             JAXBContext jc = JAXBContext.newInstance(Configuration.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             SchemaFactory schemaFactory = SchemaFactory

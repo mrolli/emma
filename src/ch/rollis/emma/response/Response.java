@@ -98,12 +98,12 @@ public class Response {
     };
 
     /**
-     * A single space; rfc1945
+     * A single space; rfc1945.
      */
     private static final String SP = " ";
 
     /**
-     * End of line sequence; rfc1945
+     * End of line sequence; rfc1945.
      */
     private static final String CRLF = "\r\n";
 
@@ -126,6 +126,11 @@ public class Response {
         return protocol;
     }
 
+    /**
+     * Returns the request the response is associated with.
+     * 
+     * @return The request object
+     */
     public Request getRequest() {
         return request;
     }

@@ -11,35 +11,106 @@ import java.util.regex.Pattern;
 
 import ch.rollis.emma.request.Request;
 
+/**
+ * HTTP protocol parser.
+ * <p>
+ * Reads in data from an input stream and tries to setup a valid request object.
+ * HTTP protocol versions 0.9, 1.0 and 1.1 are supported.
+ * 
+ * @author mrolli
+ */
 public class HttpProtocolParser {
+    /**
+     * Input stream decorated by a BufferedReader.
+     */
     private final BufferedReader reader;
+
+    /**
+     * Default character buffer size.
+     */
+    private static final int CHAR_BUFFER_SIZE = 1024;
+
+    /**
+     * The request object built while parsing.
+     */
     private Request request;
+
+    /**
+     * Major version number of HTTP protocol version.
+     */
     private int majorVersion = 0;
+
+    /**
+     * Minor version number of HTTP protocol version.
+     */
     private int minorVersion = 9;
 
+    /**
+     * Constant representing a single space.
+     */
     private static final String SP = " ";
+
+    /**
+     * Constant representing a horizontal tab.
+     */
     private static final String HT = "\t";
+
+    /**
+     * Constant representing a end of line character enforced by rfc1945.
+     */
     private static final String CRLF = "\r\n";
 
-    public HttpProtocolParser(InputStream input) {
+    /**
+     * Class constructor that "installs" a HttpProtocolParser in front of an
+     * input stream.
+     * 
+     * @param input
+     *            The input stream to read in a request from
+     */
+    public HttpProtocolParser(final InputStream input) {
         reader = new BufferedReader(new InputStreamReader(input));
     }
 
+    /**
+     * Reads in from the InputStream and parses the byets received into a
+     * request object. After validating the request object it is returned.
+     * 
+     * @return The parsed and validated request object
+     * @throws HttpProtocolException
+     *             In case the request does not adhere to the HTTP request
+     *             specification
+     * @throws IOException
+     *             If reading from the input stream is not possible
+     */
     public Request parse() throws HttpProtocolException, IOException {
+        // reset state
+        majorVersion = 0;
+        minorVersion = 9;
         request = new Request();
 
         parseRequestLine();
-
         if (request.isFullRequest()) {
             parseHeaders();
             parseEntity();
         }
-
         validateRequest();
 
         return request;
     }
 
+    /**
+     * Reads in the request line and parses for method, request URI and protocol
+     * version.
+     * <p>
+     * The method knows about Simple-Request and Full-Request request lines and
+     * parses the protocol version into two integer fields (majorVersion and
+     * minorVersion). The request URI is parsed using a java.net.URI object.
+     * 
+     * @throws HttpProtocolException
+     *             In case the request does not contain a valid request line
+     * @throws IOException
+     *             If reading from the input stream is not possible
+     */
     private void parseRequestLine() throws HttpProtocolException, IOException {
         String reqLine = reader.readLine();
         String[] reqParts = reqLine.split(SP + "+");
@@ -56,8 +127,6 @@ public class HttpProtocolParser {
             } catch (IllegalArgumentException e) {
                 throw new HttpProtocolException("Unknown method " + reqParts[0] + ".");
             }
-            majorVersion = 0;
-            minorVersion = 9;
             request.setProtocol(String.format("HTTP/" + majorVersion + "." + minorVersion));
         } else if (reqParts.length == 3) {
             // Full-Request
@@ -87,6 +156,18 @@ public class HttpProtocolParser {
         }
     }
 
+    /**
+     * Reads in any header fields available in the request.
+     * <p>
+     * The order of headers sent by the client is gracefully ignored. Any header
+     * field that is neither a general header field nor a request header field
+     * is stored as a entity header field. Extended header values are supported.
+     * 
+     * @throws HttpProtocolException
+     *             In case an invalid header value is found
+     * @throws IOException
+     *             If reading from the input stream is not possible
+     */
     private void parseHeaders() throws HttpProtocolException, IOException {
         String line = null;
         String currentHeader = null;
@@ -103,7 +184,8 @@ public class HttpProtocolParser {
                 // new header found - store previous if we have one
                 if (currentHeader != null) {
                     request.setHeader(currentHeader, currentValue);
-                    currentHeader = currentValue = null;
+                    currentHeader = null;
+                    currentValue = null;
                 }
 
                 // process new current
@@ -124,6 +206,16 @@ public class HttpProtocolParser {
         }
     }
 
+    /**
+     * Reads in the entity contained in a request if there is one.
+     * <p>
+     * The method take the entity header Content-Length" into account when
+     * deciding if an entity has to be parsed. If an entity is available it is
+     * stored within the request object.
+     * 
+     * @throws IOException
+     *             If reading from the input stream is not possible
+     */
     private void parseEntity() throws IOException {
         String cl = request.getHeader("Content-Length");
         if (cl == null || Integer.parseInt(cl) == 0) {
@@ -135,15 +227,27 @@ public class HttpProtocolParser {
         StringBuilder sb = new StringBuilder();
 
         while (sb.length() < length) {
-            char[] charBuffer = new char[1024];
+            char[] charBuffer = new char[CHAR_BUFFER_SIZE];
             reader.read(charBuffer);
             sb.append(charBuffer);
         }
         request.setEntity(sb.toString());
     }
 
-
-    public void validateRequest() throws HttpProtocolException {
+    /**
+     * Performs some protocol checks not related to parsing.
+     * <p>
+     * The following checks are performed:
+     * <ul>
+     * <li>A request header of type Host is expected if the request claims to
+     * support HTTP/1.1</li>
+     * <li>If the request is HTTP/1.0 only GET, POST and HEAD are allowed.</li>
+     * </ul>
+     * 
+     * @throws HttpProtocolException
+     *             In case the request does not adhere to HTTP protocol
+     */
+    private void validateRequest() throws HttpProtocolException {
         if (majorVersion >= 1 && minorVersion >= 1 && request.getHeader("Host") == null) {
             throw new HttpProtocolException("No Host header present.");
         }

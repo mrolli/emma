@@ -13,7 +13,7 @@ public class MimeTypes {
      * Work out the file's extension from filename. If there isn't one, we keep
      * it as the empty string ("").
      * 
-     * @param File
+     * @param file
      *            to get the extension for
      */
     public static String getExtension(File file) {
