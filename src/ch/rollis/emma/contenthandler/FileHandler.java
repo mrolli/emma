@@ -12,6 +12,7 @@ import ch.rollis.emma.response.Response;
 import ch.rollis.emma.response.ResponseFactory;
 import ch.rollis.emma.response.ResponseStatus;
 import ch.rollis.emma.util.DateConverter;
+import ch.rollis.emma.util.DateConverterException;
 import ch.rollis.emma.util.MimeTypes;
 
 /**
@@ -83,6 +84,20 @@ public class FileHandler implements ContentHandler {
                 }
             }
 
+            // Do we have a conditional GET
+            String lastModifiedString = request.getHeader("If-Modified-Since");
+            if (lastModifiedString != null) {
+                try {
+                    Date lastModified = DateConverter.dateFromString(lastModifiedString);
+                    if (file.lastModified() <= lastModified.getTime()) {
+                        return responseFacotry.getResponse(request, ResponseStatus.NOT_MODIFIED);
+                    }
+                } catch (DateConverterException e) {
+                    // do nothing, serve file anyway
+                }
+            }
+
+            // Serve the file's content
             String contentType = MimeTypes.evaluate(MimeTypes.getExtension(file));
             if (contentType == null) {
                 contentType = "application/octet-stream";
