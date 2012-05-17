@@ -218,18 +218,19 @@ public class RequestHandler implements Runnable {
     private boolean handleConnectionState(final Request req, final Response res) {
         boolean closeConnection = true;
         if (req.getProtocol().equals("HTTP/1.1")) {
+            // default in HTTP/1.1 is not to close the connection
+            closeConnection = false;
+
             String conHeader = req.getHeader("Connection");
             if (Thread.currentThread().isInterrupted()) {
                 res.setHeader("Connection", "close");
+                closeConnection = true;
             } else if (conHeader != null && conHeader.toLowerCase().equals("keep-alive")) {
-                closeConnection = false;
                 res.setHeader("Connection", "keep-alive");
                 res.setHeader("Keep-Alive", "timeout=" + (requestTimeout / 1000) + ", max=100");
-            } else {
-                res.setHeader("Connection", "close");
             }
         } else {
-            closeConnection = false;
+            res.setHeader("Connection", "close");
         }
 
         return closeConnection;
