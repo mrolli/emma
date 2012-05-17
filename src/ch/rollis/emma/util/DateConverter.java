@@ -19,6 +19,16 @@ public final class DateConverter {
     private static SimpleDateFormat rfc1123;
 
     /**
+     * Simple date formatter for dates in rfc1036 date format.
+     */
+    private static SimpleDateFormat rfc1036;
+
+    /**
+     * Simple date formatter for dates in ANSI C's asctime() date format.
+     */
+    private static SimpleDateFormat ansi_asctime;
+
+    /**
      * Simple date formatter for dates in log date format.
      */
     private static SimpleDateFormat logFormat;
@@ -26,6 +36,12 @@ public final class DateConverter {
     static {
         rfc1123 = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         rfc1123.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        rfc1036 = new SimpleDateFormat("EEEE, dd-MMM-yy HH:mm:ss z", Locale.US);
+        rfc1036.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        ansi_asctime = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy", Locale.US);
+        ansi_asctime.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         logFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
     }
@@ -70,6 +86,18 @@ public final class DateConverter {
     public static Date dateFromString(final String date) throws DateConverterException {
         try {
             return rfc1123.parse(date);
+        } catch (ParseException e) {
+            // do nothing
+        }
+
+        try {
+            return rfc1036.parse(date);
+        } catch (ParseException e) {
+            // do nothing
+        }
+
+        try {
+            return ansi_asctime.parse(date);
         } catch (ParseException e) {
             // do nothing
         }
