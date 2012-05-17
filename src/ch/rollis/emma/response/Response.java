@@ -61,6 +61,10 @@ public class Response {
             prettyFieldNames.put("DATE", "Date");
             put("PRAGMA", null);
             prettyFieldNames.put("PRAGMA", "Pragma");
+            put("CONNECTION", null);
+            prettyFieldNames.put("CONNECTION", "Connection");
+            put("KEEP-ALIVE", null);
+            prettyFieldNames.put("KEEP-ALIVE", "Keep-Alive");
         }
     };
 

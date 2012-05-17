@@ -58,6 +58,11 @@ public class RequestHandler implements Runnable {
     private final Logger logger;
 
     /**
+     * Request timeout in milliseconds.
+     */
+    private final int requestTimeout = 15000;
+
+    /**
      * Class constructor that generates a request handler that handles a HTTP
      * request initiated by a client.
      * 
@@ -95,7 +100,7 @@ public class RequestHandler implements Runnable {
                     Request request;
                     // setup request timer to handle situations where the client
                     // does not send anything
-                    Thread timer = new Thread(new RequestHandlerTimeout(comSocket, 15000, logger));
+                    Thread timer = new Thread(new RequestHandlerTimeout(comSocket, requestTimeout, logger));
                     timer.start();
                     try {
                         request = parser.parse();
@@ -109,13 +114,13 @@ public class RequestHandler implements Runnable {
                     ServerContext context = scm.getContext(request);
                     ContentHandler handler = new ContentHandlerFactory().getHandler(request);
                     Response response = handler.process(request, context);
+
+                    boolean closeConnection = handleConnectionState(request, response);
+
                     response.send(output);
                     context.log(Level.INFO, getLogMessage(client, request, response));
 
-                    // break if not HTTP/1.1 and keep-alive is not set or if an
-                    // error occurred
-                    if (!request.getProtocol().equals("HTTP/1.1")
-                            || response.getStatus().getCode() >= 400) {
+                    if (closeConnection) {
                         break;
                     }
                 } catch (HttpProtocolException e) {
@@ -184,6 +189,39 @@ public class RequestHandler implements Runnable {
                 request.getMethod(), request.getRequestURI().toString(),
                 request.getProtocol(), response.getStatus().getCode(), response
                 .getHeader("Content-Length"));
+    }
+
+    /**
+     * Returns if the connection has to be closed or not depending on the
+     * client's request.
+     * <p>
+     * The response object gets modified to send correct header information to
+     * the client!
+     * 
+     * @param req
+     *            The current request
+     * @param res
+     *            The response to be sent
+     * @return True if connection shall be closed after sending reponse
+     */
+    private boolean handleConnectionState(final Request req, final Response res) {
+        boolean closeConnection = true;
+        if (req.getProtocol().equals("HTTP/1.1")) {
+            String conHeader = req.getHeader("Connection");
+            if (Thread.currentThread().isInterrupted()) {
+                res.setHeader("Connection", "close");
+            } else if (conHeader != null && conHeader.toLowerCase().equals("keep-alive")) {
+                closeConnection = false;
+                res.setHeader("Connection", "keep-alive");
+                res.setHeader("Keep-Alive", "timeout=" + (requestTimeout / 1000) + ", max=100");
+            } else {
+                res.setHeader("Connection", "close");
+            }
+        } else {
+            closeConnection = false;
+        }
+
+        return closeConnection;
     }
 }
 
