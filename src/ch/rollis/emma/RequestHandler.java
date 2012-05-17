@@ -1,9 +1,11 @@
 package ch.rollis.emma;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -74,7 +76,7 @@ public class RequestHandler implements Runnable {
         comSocket = socket;
         sslSecured = sslFlag;
         scm = contextManager;
-        this.logger = loggerInstance;
+        logger = loggerInstance;
     }
 
     @Override
@@ -87,32 +89,65 @@ public class RequestHandler implements Runnable {
             InputStream input = comSocket.getInputStream();
             OutputStream output = comSocket.getOutputStream();
 
-            HttpProtocolParser parser = new HttpProtocolParser(input);
-            try {
-                Request request = parser.parse();
-                request.setPort(comSocket.getLocalPort());
-                request.setIsSslSecured(sslSecured);
-                ServerContext context = scm.getContext(request);
-                ContentHandler handler = new ContentHandlerFactory().getHandler(request);
-                Response response = handler.process(request, context);
-                response.send(output);
-                context.log(Level.INFO, getLogMessage(client, request, response));
-            } catch (HttpProtocolException e) {
-                logger.log(Level.WARNING, "HTTP protocol violation", e);
-                Response response = new ResponseFactory().getResponse(ResponseStatus.BAD_REQUEST);
-                response.send(output);
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, "RequestHandler cannot handle request", e);
-                Response response = new ResponseFactory()
-                .getResponse(ResponseStatus.INTERNAL_SERVER_ERROR);
-                response.send(output);
-            } finally {
-                if (comSocket != null && !comSocket.isClosed()) {
-                    comSocket.close();
+            while (!Thread.currentThread().isInterrupted()) {
+                HttpProtocolParser parser = new HttpProtocolParser(input);
+                try {
+                    Request request;
+                    // setup request timer to handle situations where the client
+                    // does not send anything
+                    Thread timer = new Thread(new RequestHandlerTimeout(comSocket, 15000, logger));
+                    timer.start();
+                    try {
+                        request = parser.parse();
+                    } catch (SocketException e) {
+                        throw new RequestTimeoutException(e);
+                    }
+                    timer.interrupt();
+
+                    request.setPort(comSocket.getLocalPort());
+                    request.setIsSslSecured(sslSecured);
+                    ServerContext context = scm.getContext(request);
+                    ContentHandler handler = new ContentHandlerFactory().getHandler(request);
+                    Response response = handler.process(request, context);
+                    response.send(output);
+                    context.log(Level.INFO, getLogMessage(client, request, response));
+
+                    // break if not HTTP/1.1 and keep-alive is not set or if an
+                    // error occurred
+                    if (!request.getProtocol().equals("HTTP/1.1")
+                            || response.getStatus().getCode() >= 400) {
+                        break;
+                    }
+                } catch (HttpProtocolException e) {
+                    logger.log(Level.WARNING, "HTTP protocol violation", e);
+                    Response response = new ResponseFactory()
+                    .getResponse(ResponseStatus.BAD_REQUEST);
+                    response.send(output);
+                    break;
                 }
             }
+        } catch (RequestTimeoutException e) {
+            logger.log(Level.SEVERE, "Request timeout reched", e);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error in RequestHandler", e);
+            // try to gracefully inform the client
+            if (!comSocket.isOutputShutdown()) {
+                Response response = new ResponseFactory()
+                .getResponse(ResponseStatus.INTERNAL_SERVER_ERROR);
+                try {
+                    response.send(comSocket.getOutputStream());
+                } catch (IOException ioe) {
+                    // do nothing
+                }
+            }
+        } finally {
+            if (comSocket != null && !comSocket.isClosed()) {
+                try {
+                    comSocket.close();
+                } catch (IOException e) {
+                    logger.log(Level.SEVERE, "Error while closing com socket");
+                }
+            }
         }
 
         logger.log(Level.INFO, Thread.currentThread().getName() + " ended.");

@@ -73,6 +73,9 @@ public class HttpProtocolParser {
     /**
      * Reads in from the InputStream and parses the byets received into a
      * request object. After validating the request object it is returned.
+     * <p>
+     * This method blocks as it is using a BufferedReader to get input line by
+     * line!
      * 
      * @return The parsed and validated request object
      * @throws HttpProtocolException
