@@ -40,7 +40,6 @@ public class ResponseFactory {
      */
     public Response getResponse(final Request request) {
         Response response = getDefaultResponse();
-        response.setProtocol(request.getProtocol());
         response.setRequest(request);
         return response;
     }
@@ -78,7 +77,6 @@ public class ResponseFactory {
      */
     public Response getResponse(final Request request, final ResponseStatus status) {
         Response response = getDefaultResponse();
-        response.setProtocol(request.getProtocol());
         response.setRequest(request);
         response.setStatus(status);
         response.setHeader("Content-Type", "text/html");

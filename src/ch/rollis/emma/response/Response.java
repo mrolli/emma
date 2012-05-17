@@ -171,7 +171,8 @@ public class Response {
      *            The request the response answers
      */
     public void setRequest(final Request req) {
-        this.request = req;
+        request = req;
+        protocol = req.getProtocol();
     }
 
     /**
