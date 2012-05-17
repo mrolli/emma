@@ -182,14 +182,14 @@ public class HttpProtocolParser {
             if (colonPos > 0) {
                 // new header found - store previous if we have one
                 if (currentHeader != null) {
-                    request.setHeader(currentHeader, currentValue);
+                    request.setHeader(currentHeader, currentValue.trim());
                     currentHeader = null;
                     currentValue = null;
                 }
 
                 // process new current
                 currentHeader = line.substring(0, colonPos).trim();
-                currentValue = line.substring(colonPos + 1).trim();
+                currentValue = line.substring(colonPos + 1);
             } else {
                 // extend header field
                 if (currentHeader == null || !(line.startsWith(SP) || line.startsWith(HT))) {
@@ -201,7 +201,7 @@ public class HttpProtocolParser {
         }
         // !store the last as it has not been stored previously!
         if (currentHeader != null) {
-            request.setHeader(currentHeader, currentValue);
+            request.setHeader(currentHeader, currentValue.trim());
         }
     }
 
