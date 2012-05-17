@@ -42,7 +42,6 @@ public final class DateConverter {
      * @param date
      *            The date to convert
      * @return The string representation in rfc1123 date format
-     * @return
      */
     public static String formatRfc1123(final Date date) {
         return rfc1123.format(date);

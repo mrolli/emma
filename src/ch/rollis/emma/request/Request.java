@@ -210,7 +210,7 @@ public class Request {
      * <p>
      * This is a convenience method.
      * 
-     * @see isFullRequst()
+     * @see #isFullRequest()
      * @return true if request is a simple request; false otherwise
      */
     public boolean isSimpleRequest() {
