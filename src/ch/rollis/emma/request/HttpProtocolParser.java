@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.regex.Matcher;
@@ -125,7 +126,12 @@ public class HttpProtocolParser {
      *             If reading from the input stream is not possible
      */
     private void parseRequestLine() throws HttpProtocolException, IOException {
-        String reqLine = reader.readLine();
+        String reqLine = null;
+        try {
+            reqLine = reader.readLine();
+        } catch (SocketException e) {
+            throw e;
+        }
         String[] reqParts = reqLine.split(SP + "+");
 
         if (reqParts.length == 2) {

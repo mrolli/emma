@@ -143,7 +143,7 @@ public class RequestHandler implements Runnable {
                 }
             }
         } catch (RequestTimeoutException e) {
-            logger.log(Level.INFO, "Request timeout reached", e);
+            logger.log(Level.INFO, "Request handler thread got timeout");
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error in RequestHandler", e);
             // try to gracefully inform the client
