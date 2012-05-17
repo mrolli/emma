@@ -1,65 +1,226 @@
 package ch.rollis.emma.response;
 
+/**
+ * Enumeration of all HTTP/1.0 and HTTP/1.1 response codes and their reason
+ * phrases listed in rfc1945 and 2616.
+ * 
+ * @author mrolli
+ */
 public enum ResponseStatus {
+    /**
+     * 100 - Continue.
+     */
     CONTINUE (100, "Continue"),
+    /**
+     * 101 - Switching Protocols.
+     */
     SWITCHING_PROTOCOLS (101, "Switching Protocols"),
+    /**
+     * 200 - OK.
+     */
     OK (200, "OK"),
+    /**
+     * 201 - Created.
+     */
     CREATED (201, "Created"),
+    /**
+     * 202 - Accepted.
+     */
     ACCEPTED (202, "Accepted"),
+    /**
+     * 203 - Non-Authoritative Information.
+     */
     NON_AUTHORITATIVE_INFORMATION (203, "Non-Authoritative Information"),
+    /**
+     * 204 - No Content.
+     */
     NO_CONTENT (204, "No Content"),
+    /**
+     * 205 - Reset Content.
+     */
     RESET_CONTENT (205, "Reset Content"),
+    /**
+     * 206 - Partial Content.
+     */
     PARTIAL_CONTENT (206, "Partial Content"),
+    /**
+     * 300 - Multiple Choices.
+     */
     MULTIPLE_CHOICES (300, "Multiple Choices"),
+    /**
+     * 301 - Moved Permanently.
+     */
     MOVED_PERMANENTLY (301, "Moved Permanently"),
+    /**
+     * 302 - Found.
+     */
     FOUND (302, "Found"),
+    /**
+     * 303 - See Other.
+     */
     SEE_OTHER (303, "See Other"),
+    /**
+     * 304 - Not Modified.
+     */
     NOT_MODIFIED (304, "Not Modified"),
+    /**
+     * 305 - Use Proxy.
+     */
     USE_PROXY (305, "Use Proxy"),
+    /**
+     * 306 -  (Unused).
+     */
     UNUSED (306, " (Unused)"),
+    /**
+     * 307 - Temporary Redirect.
+     */
     TEMPORARY_REDIRECT (307, "Temporary Redirect"),
+    /**
+     * 400 - Bad Request.
+     */
     BAD_REQUEST (400, "Bad Request"),
+    /**
+     * 401 - Unauthorized.
+     */
     UNAUTHORIZED (401, "Unauthorized"),
+    /**
+     * 402 - Payment Required.
+     */
     PAYMENT_REQUIRED (402, "Payment Required"),
+    /**
+     * 403 - Forbidden.
+     */
     FORBIDDEN (403, "Forbidden"),
+    /**
+     * 404 - Not Found.
+     */
     NOT_FOUND (404, "Not Found"),
+    /**
+     * 405 - Method Not Allowed.
+     */
     METHOD_NOT_ALLOWED (405, "Method Not Allowed"),
+    /**
+     * 406 - Not Acceptable.
+     */
     NOT_ACCEPTABLE (406, "Not Acceptable"),
+    /**
+     * 407 - Proxy Authentication Required.
+     */
     PROXY_AUTHENTICATION_REQUIRED (407, "Proxy Authentication Required"),
+    /**
+     * 408 - Request Timeout.
+     */
     REQUEST_TIMEOUT (408, "Request Timeout"),
+    /**
+     * 409 - Conflict.
+     */
     CONFLICT (409, "Conflict"),
+    /**
+     * 410 - Gone.
+     */
     GONE (410, "Gone"),
+    /**
+     * 411 - Length Required.
+     */
     LENGTH_REQUIRED (411, "Length Required"),
+    /**
+     * 412 - Precondition Failed.
+     */
     PRECONDITION_FAILED (412, "Precondition Failed"),
+    /**
+     * 413 - Request Entity Too Large.
+     */
     REQUEST_ENTITY_TOO_LARGE (413, "Request Entity Too Large"),
+    /**
+     * 414 - Request-URI Too Long.
+     */
     REQUEST_URI_TO_LONG (414, "Request-URI Too Long"),
+    /**
+     * 415 - Unsupported Media Type.
+     */
     UNSUPPORTED_MEDIA_TYPE (415, "Unsupported Media Type"),
+    /**
+     * 416 - Requested Range Not Satisfiable.
+     */
     REQUESTED_RANGE_NOT_SATISFIABLE (416, "Requested Range Not Satisfiable"),
+    /**
+     * 417 - Expectation Failed.
+     */
     EXPECTATION_FAILED (417, "Expectation Failed"),
+    /**
+     * 500 - Internal Server Error.
+     */
     INTERNAL_SERVER_ERROR (500, "Internal Server Error"),
+    /**
+     * 501 - Not Implemented.
+     */
     NOT_IMPLEMENTED (501, "Not Implemented"),
+    /**
+     * 502 - Bad Gateway.
+     */
     BAD_GATEWAY (502, "Bad Gateway"),
+    /**
+     * 503 - Service Unavailable.
+     */
     SERVICE_UNAVAILABLE (503, "Service Unavailable"),
+    /**
+     * 504 - Gateway Timeout.
+     */
     GATEWAY_TIMEOUT (504, "Gateway Timeout"),
+    /**
+     * 505 - HTTP Version Not Supported.
+     */
     HTTP_VERSION_NOT_SUPPORTED (505, "HTTP Version Not Supported");
 
+    /**
+     * The response code.
+     */
     private final int code;
+
+    /**
+     * The reason phrase.
+     */
     private final String reasonPhrase;
 
-    ResponseStatus(int code, String reasonPhrase) {
-        this.code = code;
-        this.reasonPhrase = reasonPhrase;
+    /**
+     * Class constructor sets up a ReponseStatus object.
+     * 
+     * @param c
+     *            The response code
+     * @param rp
+     *            The reason phrase
+     */
+    ResponseStatus(final int c, final String rp) {
+        code = c;
+        reasonPhrase = rp;
     }
 
+    /**
+     * Return the response status code.
+     * 
+     * @return Status code
+     */
     public int getCode() {
         return code;
     }
 
+    /**
+     * Returns the reason phrase.
+     * 
+     * @return Reason phrase
+     */
     public String getReasonPhrase() {
         return reasonPhrase;
     }
 
-    public static ResponseStatus evaluateCode(int code) {
+    /**
+     * Evaluates a response code to a ResponseStatus and returns it.
+     * 
+     * @param code
+     *            The code to evaluate
+     * @return ReponseStatus
+     */
+    public static ResponseStatus evaluateCode(final int code) {
         switch (code) {
             case 200:
                 return ResponseStatus.OK;

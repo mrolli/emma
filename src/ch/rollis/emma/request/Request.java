@@ -3,26 +3,63 @@ package ch.rollis.emma.request;
 import java.net.URI;
 import java.util.HashMap;
 
-import ch.rollis.emma.HttpMethod;
 
 /**
  * Class represents a HTTP request.
- * 
+ * <p>
  * Supported header fields are denoted in class constructor.
  * 
  * @author mrolli
  */
 public class Request {
+    /**
+     * Protocol version ("i.e HTTP/1.0").
+     */
     private String protocol;
+
+    /**
+     * HTTP method.
+     */
     private HttpMethod method;
+
+    /**
+     * Request URI.
+     */
     private URI requestURI;
+
+    /**
+     * Entity data of request.
+     */
     private String entity;
+
+    /**
+     * Map consisting of general headers.
+     */
     private final HashMap<String, String> headersGeneral;
+
+    /**
+     * Map consisting of request headers.
+     */
     private final HashMap<String, String> headersRequest;
+
+    /**
+     * Map consisting of entity headers.
+     */
     private final HashMap<String, String> headersEntity;
+
+    /**
+     * Port number the request arrived.
+     */
     private int port;
+
+    /**
+     * True if request was in SSL context.
+     */
     private boolean sslSecured = false;
 
+    /**
+     * Class constructor generates a vanilla request.
+     */
     public Request() {
         headersGeneral = new HashMap<String, String>();
         headersGeneral.put("DATE", null);
@@ -45,15 +82,28 @@ public class Request {
         headersEntity.put("LAST-MODIFIED", null);
     }
 
+    /**
+     * Returns the protocol of the request.
+     * 
+     * @return The protocol version
+     */
     public String getProtocol() {
         return protocol;
     }
 
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
+    /**
+     * Sets the protocol version.
+     * 
+     * @param proto
+     *            The protocol version of the request
+     */
+    void setProtocol(final String proto) {
+        this.protocol = proto;
     }
 
     /**
+     * Returns the method type.
+     * 
      * @return the method
      */
     public HttpMethod getMethod() {
@@ -61,15 +111,19 @@ public class Request {
     }
 
     /**
-     * @param method
+     * Sets the http method.
+     * 
+     * @param httpMethod
      *            the method to set
      */
-    public void setMethod(HttpMethod method) {
-        this.method = method;
+    void setMethod(final HttpMethod httpMethod) {
+        method = httpMethod;
     }
 
     /**
      * Check if request is a GET request.
+     * <p>
+     * This is a convenience method.
      * 
      * @return true if request is GET, false otherwise
      */
@@ -79,6 +133,8 @@ public class Request {
 
     /**
      * Check if request is a POST request.
+     * <p>
+     * This is a convenience method.
      * 
      * @return true if request is POST, false otherwise
      */
@@ -88,6 +144,8 @@ public class Request {
 
     /**
      * Check if request is a HEAD request.
+     * <p>
+     * This is a convenience method.
      * 
      * @return true if request is HEAD, false otherwise
      */
@@ -97,6 +155,8 @@ public class Request {
 
     /**
      * Check if request is a PUT request.
+     * <p>
+     * This is a convenience method.
      * 
      * @return true if request is PUT, false otherwise
      */
@@ -106,6 +166,8 @@ public class Request {
 
     /**
      * Check if request is a DELETE request.
+     * <p>
+     * This is a convenience method.
      * 
      * @return true if request is DELETE, false otherwise
      */
@@ -114,6 +176,8 @@ public class Request {
     }
 
     /**
+     * Returns the request URI.
+     * 
      * @return the requestURI
      */
     public URI getRequestURI() {
@@ -121,15 +185,19 @@ public class Request {
     }
 
     /**
-     * @param requestURI
+     * Sets the request URI.
+     * 
+     * @param uri
      *            the requestURI to set
      */
-    public void setRequestURI(URI requestURI) {
-        this.requestURI = requestURI;
+    void setRequestURI(final URI uri) {
+        this.requestURI = uri;
     }
 
     /**
-     * Check if request is a full request
+     * Checks if request is a full request.
+     * <p>
+     * This is a convenience method.
      * 
      * @return true if request is a full request; false otherwise
      */
@@ -138,10 +206,11 @@ public class Request {
     }
 
     /**
-     * Convenience method
+     * Checks if request is a simple request.
+     * <p>
+     * This is a convenience method.
      * 
-     * See method isFullRequst()
-     * 
+     * @see isFullRequst()
      * @return true if request is a simple request; false otherwise
      */
     public boolean isSimpleRequest() {
@@ -151,12 +220,12 @@ public class Request {
     /**
      * Returns the value of a general header field.
      * 
-     * @param key
+     * @param headerField
      *            Header field to retrieve the value for
      * @return Value of header field
      */
-    public String getHeader(String key) {
-        key = key.toUpperCase();
+    public String getHeader(final String headerField) {
+        String key = headerField.toUpperCase();
         if (headersGeneral.containsKey(key)) {
             return headersGeneral.get(key);
         } else if (headersRequest.containsKey(key)) {
@@ -173,13 +242,13 @@ public class Request {
      * Values for unknown header fields are stored as entity headers, see
      * rfc1945.
      * 
-     * @param key
+     * @param headerField
      *            Header field
      * @param value
      *            Value of header field
      */
-    public void setHeader(String key, String value) {
-        key = key.toUpperCase();
+    void setHeader(final String headerField, final String value) {
+        String key = headerField.toUpperCase();
         if (headersGeneral.containsKey(key)) {
             headersGeneral.put(key, value);
         } else if (headersRequest.containsKey(key)) {
@@ -189,23 +258,50 @@ public class Request {
         }
     }
 
+    /**
+     * Returns the entity data received in request.
+     * <p>
+     * If the request did not send any entity data, a null reference is returned
+     * instead.
+     * 
+     * @return The entity data or a null reference
+     */
     public String getEntity() {
         return entity;
     }
 
-    public void setEntity(String entity) {
-        this.entity = entity;
+    /**
+     * Sets the request entity.
+     * 
+     * @param entityData
+     *            String received as entity data
+     */
+    void setEntity(final String entityData) {
+        entity = entityData;
     }
 
+    /**
+     * Returns ture if request was SSL secured.
+     * 
+     * @return True if request was SSL secured
+     */
     public boolean isSslSecured() {
         return sslSecured;
     }
 
-    public void setIsSslSecured(boolean flag) {
+    /**
+     * Sets the flag that denotes if request was received in SSL context.
+     * 
+     * @param flag
+     *            Denotes if SSL secured request
+     */
+    public void setIsSslSecured(final boolean flag) {
         sslSecured = flag;
     }
 
     /**
+     * Returns the port on which the request was received.
+     * 
      * @return the port
      */
     public int getPort() {
@@ -213,10 +309,13 @@ public class Request {
     }
 
     /**
-     * @param port
+     * Sets the port the request was received on.
+     * 
+     * @param portNumber
      *            the port to set
      */
-    public void setPort(int port) {
-        this.port = port;
+    public void setPort(final int portNumber) {
+        port = portNumber;
     }
 }
+

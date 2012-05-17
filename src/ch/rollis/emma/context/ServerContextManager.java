@@ -5,15 +5,46 @@ import java.util.HashMap;
 
 import ch.rollis.emma.request.Request;
 
+/**
+ * Manages all server contexts of the web server.
+ * <p>
+ * Central point of all server context. Based on a request a specific server
+ * context is served.
+ * 
+ * @author mrolli
+ * 
+ */
 public class ServerContextManager {
-
+    /**
+     * Map consisting of server contexts indexed by theri server name.
+     */
     private final HashMap<String, ServerContext> contexts;
 
+    /**
+     * Class constructor simply initializes an empty manager.
+     */
     public ServerContextManager() {
         contexts = new HashMap<String, ServerContext>();
     }
 
-    public ServerContext getContext(Request request) throws ServerContextException {
+    /**
+     * Returns the server context for a given request.
+     * <p>
+     * The server context manager investigates the host request header of
+     * HTTP/1.1 and returns the requested context if available. In the following
+     * cases the default server context is returned instead:
+     * <ul>
+     * <li>Host specified in host header could not be found.</li>
+     * <li>No host header found in HTTP/1.1 request.</li>
+     * </ul>
+     * 
+     * @param request
+     *            The request to resolve the context for
+     * @return The server context that handles the given request
+     * @throws ServerContextException
+     *             In case a default context cannot be found
+     */
+    public ServerContext getContext(final Request request) throws ServerContextException {
         String host = request.getHeader("Host");
         if (contexts.containsKey(host)) {
             return contexts.get(host);
@@ -22,7 +53,23 @@ public class ServerContextManager {
         }
     }
 
-    public void addContext(ServerContext context) throws ServerContextException {
+    /**
+     * Adds a server context to the manager.
+     * <p>
+     * The given server context is stored by its server name and additionally by
+     * each server alias defined for it. An exception is thrown if duplicate
+     * server name/server aliases are encountered. One server context can be
+     * setup to serve as the default server context. If such a default sever
+     * context already exists and a second is stored as default context, an
+     * exception will be thrown.
+     * 
+     * @param context
+     *            The server context to store
+     * @throws ServerContextException
+     *             In case a context for server name already exists or default
+     *             context already exists
+     */
+    public void addContext(final ServerContext context) throws ServerContextException {
         String name = context.getServerName();
         ArrayList<String> aliases = context.getServerAliases();
 
@@ -48,10 +95,22 @@ public class ServerContextManager {
         }
     }
 
+    /**
+     * Checks if a default server context is setup.
+     * 
+     * @return True if a default sever context is setup; false otherwise
+     */
     public boolean hasDefaultContext() {
         return contexts.containsKey("default");
     }
 
+    /**
+     * Returns the default server context setup.
+     * 
+     * @return The default server context
+     * @throws ServerContextException
+     *             In case no default context is setup
+     */
     public ServerContext getDefaultContext() throws ServerContextException {
         if (!hasDefaultContext()) {
             throw new ServerContextException("No default context is configured");
@@ -59,3 +118,4 @@ public class ServerContextManager {
         return contexts.get("default");
     }
 }
+

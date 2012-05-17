@@ -3,24 +3,44 @@ package ch.rollis.emma.util;
 import java.io.File;
 import java.util.HashMap;
 
-public class MimeTypes {
+/**
+ * Utitlity class to find mime types of files.
+ * 
+ * @author mrolli
+ */
+public final class MimeTypes {
     /**
-     * file extension to mimetypes map
+     * file extension to mime types map.
      */
     private static final HashMap<String, String> MIME_TYPES = new HashMap<String, String>();
 
     /**
-     * Work out the file's extension from filename. If there isn't one, we keep
-     * it as the empty string ("").
+     * Private class constructor to deny instantiation.
+     */
+    private MimeTypes() {
+    }
+
+    /**
+     * Work out the file's extension from filename. If there isn't one an empty
+     * string is returned.
      * 
      * @param file
-     *            to get the extension for
+     *            File object to get the extension for
+     * @return the extension found
      */
-    public static String getExtension(File file) {
+    public static String getExtension(final File file) {
         return MimeTypes.getExtension(file.getName());
     }
 
-    public static String getExtension(String filename) {
+    /**
+     * Work out the file's extension from filename. If there isn't one an empty
+     * string is returned.
+     * 
+     * @param filename
+     *            File name to get the extension for
+     * @return the extension found
+     */
+    public static String getExtension(final String filename) {
         String extension = "";
         int dotPos = filename.lastIndexOf(".");
         if (dotPos >= 0) {
@@ -29,7 +49,14 @@ public class MimeTypes {
         return extension.toLowerCase();
     }
 
-    public static String evaluate(String fileExtension) {
+    /**
+     * Returns the mime type associated with a given file extension.
+     * 
+     * @param fileExtension
+     *            to get the mime type for
+     * @return The mime type evaluated
+     */
+    public static String evaluate(final String fileExtension) {
         return MIME_TYPES.get(fileExtension);
     }
 

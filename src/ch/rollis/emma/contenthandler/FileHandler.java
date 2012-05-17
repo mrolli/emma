@@ -14,9 +14,15 @@ import ch.rollis.emma.response.ResponseStatus;
 import ch.rollis.emma.util.DateConverter;
 import ch.rollis.emma.util.MimeTypes;
 
+/**
+ * This content handler works on resources in the filesystem.
+ * <p>
+ * 
+ * @author mrolli
+ */
 public class FileHandler implements ContentHandler {
     @Override
-    public Response process(Request request, ServerContext context) {
+    public Response process(final Request request, final ServerContext context) {
         File docRoot, file;
 
         ResponseFactory responseFacotry = new ResponseFactory();
@@ -88,7 +94,7 @@ public class FileHandler implements ContentHandler {
             response.setContentLength(String.valueOf(file.length()));
             response.setLastModified(DateConverter.formatRfc1123(new Date(file.lastModified())));
 
-            byte fileContent[] = new byte[(int) file.length()];
+            byte[] fileContent = new byte[(int) file.length()];
             new FileInputStream(file).read(fileContent);
             response.setEntity(fileContent);
 
@@ -99,7 +105,16 @@ public class FileHandler implements ContentHandler {
         }
     }
 
-    public String getDirectoryListing(String uri, File targetDir) {
+    /**
+     * Generates a html page with a table displaying the contents of a folder.
+     * 
+     * @param uri
+     *            Uri for which directory is displayed
+     * @param targetDir
+     *            Directory to display as a table
+     * @return HTML message body to be used as response
+     */
+    public String getDirectoryListing(final String uri, final File targetDir) {
         String[] files = targetDir.list();
         String msg = "<html><head><title>Index of " + uri + "</title></head><body><h1>Index of "
                 + uri + "</h1><pre><hr />";
@@ -108,9 +123,8 @@ public class FileHandler implements ContentHandler {
             String u = uri.substring(0, uri.length() - 1);
             int slash = u.lastIndexOf('/');
             if (slash >= 0 && slash < u.length()) {
-                msg += "<img src=\"/images/icons/back.gif\" alt=\"[DIR]\" width=\"20\" height=\"22\"> "
-                        + "<a href=\""
-                        + uri.substring(0, slash + 1)
+                msg += "<img src=\"/images/icons/back.gif\" alt=\"[DIR]\" width=\"20\""
+                        + " height=\"22\"> <a href=\"" + uri.substring(0, slash + 1)
                         + "\">Parent Directory</a>\r\n";
             }
         }
@@ -121,13 +135,16 @@ public class FileHandler implements ContentHandler {
 
                 if (curFile.isDirectory()) {
                     files[i] += "/";
-                    msg += "<img src=\"/images/icons/folder.gif\" alt=\"[DIR]\" width=\"20\" height=\"22\"> ";
+                    msg += "<img src=\"/images/icons/folder.gif\" alt=\"[DIR]\" width=\"20\""
+                            + " height=\"22\"> ";
                 } else {
                     String mimetype = MimeTypes.evaluate(MimeTypes.getExtension(files[i]));
                     if (mimetype.startsWith("image")) {
-                        msg += "<img src=\"/images/icons/image.gif\" alt=\"[DIR]\" width=\"20\" height=\"22\"> ";
+                        msg += "<img src=\"/images/icons/image.gif\" alt=\"[DIR]\" width=\"20\""
+                                + " height=\"22\"> ";
                     } else {
-                        msg += "<img src=\"/images/icons/text.gif\" alt=\"[DIR]\" width=\"20\" height=\"22\"> ";
+                        msg += "<img src=\"/images/icons/text.gif\" alt=\"[DIR]\" width=\"20\""
+                                + " height=\"22\"> ";
                     }
                 }
                 msg += "<a href=\"" + files[i] + "\">" + files[i] + "</a>";
@@ -152,3 +169,4 @@ public class FileHandler implements ContentHandler {
         return msg;
     }
 }
+

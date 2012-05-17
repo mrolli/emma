@@ -6,12 +6,21 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class DateConverter {
+/**
+ * The DateConverter class provides static methods to convert date objects into
+ * string representations and date strings into date objects.
+ * 
+ * @author mrolli
+ */
+public final class DateConverter {
     /**
-     * 
+     * Simple date formatter for dates in rfc1123 date format.
      */
     private static SimpleDateFormat rfc1123;
 
+    /**
+     * Simple date formatter for dates in log date format.
+     */
     private static SimpleDateFormat logFormat;
 
     static {
@@ -21,15 +30,45 @@ public class DateConverter {
         logFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
     }
 
-    public static String formatRfc1123(Date date) {
+    /**
+     * Private constructor to deny class instantiation.
+     */
+    private DateConverter() {
+    };
+
+    /**
+     * Converts a date object to a rfc1123 conform date string.
+     * 
+     * @param date
+     *            The date to convert
+     * @return The string representation in rfc1123 date format
+     * @return
+     */
+    public static String formatRfc1123(final Date date) {
         return rfc1123.format(date);
     }
 
-    public static String formatLog(Date date) {
+    /**
+     * Converts a date object to a date string in log format.
+     * 
+     * @param date
+     *            The date to convert
+     * @return The string representation in log format
+     */
+    public static String formatLog(final Date date) {
         return logFormat.format(date);
     }
 
-    public static Date dateFromString(String date) throws DateConverterException {
+    /**
+     * Converts a date string into a java.util.date object.
+     * 
+     * @param date
+     *            The date string to convert
+     * @return Date object
+     * @throws DateConverterException
+     *             In case the conversion leads to error states
+     */
+    public static Date dateFromString(final String date) throws DateConverterException {
         try {
             return rfc1123.parse(date);
         } catch (ParseException e) {
@@ -46,3 +85,4 @@ public class DateConverter {
         throw new DateConverterException("Unable to parse date " + date);
     }
 }
+

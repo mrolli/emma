@@ -1,4 +1,4 @@
-package ch.rollis.emma;
+package ch.rollis.emma.request;
 
 /**
  * Exception class for HTTP protocol exceptions.
@@ -22,9 +22,9 @@ public class HttpProtocolException extends Exception {
 
     /**
      * Single parent exception constructor.
-     *
+     * 
      * @param cause
-     *            The exception to rethrow with this type
+     *            The exception to rethrown with this type
      */
     public HttpProtocolException(final Exception cause) {
         super(cause);

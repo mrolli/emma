@@ -9,6 +9,15 @@ import java.util.HashMap;
 import ch.rollis.emma.request.Request;
 import ch.rollis.emma.util.DateConverter;
 
+/**
+ * The Response class encapsulates all data and behavior for managing a
+ * response.
+ * <p>
+ * The response object can be manipulated in all aspects of a HTTP response i.e.
+ * by setting the HTTP status, the entity body, headers and the like.
+ * 
+ * @author mrolli
+ */
 public class Response {
     /**
      * Protocol version to use for the response.
@@ -107,18 +116,38 @@ public class Response {
      */
     private static final String CRLF = "\r\n";
 
+    /**
+     * Class constructor sets up a vanilla HTTP/1.1 resopnse.
+     */
     Response() {
         this("HTTP/1.1");
     }
 
-    Response(String protocol) {
-        this.protocol = protocol;
+    /**
+     * Class constructor sets up a vanilla response with the given protocol.
+     * 
+     * @param proto
+     *            The protocol version to use
+     */
+    Response(final String proto) {
+        this.protocol = proto;
     }
 
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
+    /**
+     * Sets the protocol version to use for the response.
+     * 
+     * @param proto
+     *            The protocol version to use
+     */
+    public void setProtocol(final String proto) {
+        this.protocol = proto;
     }
 
+    /**
+     * Returns the protocol version of the response.
+     * 
+     * @return The protocol version set
+     */
     public String getProtocol() {
         if (request != null) {
             return request.getProtocol();
@@ -135,8 +164,14 @@ public class Response {
         return request;
     }
 
-    public void setRequest(Request request) {
-        this.request = request;
+    /**
+     * Set the request the response is based on.
+     * 
+     * @param req
+     *            The request the response answers
+     */
+    public void setRequest(final Request req) {
+        this.request = req;
     }
 
     /**
@@ -146,43 +181,94 @@ public class Response {
         return status;
     }
 
-    public void setStatus(ResponseStatus status) {
-        this.status = status;
+    /**
+     * Sets the response status of the response.
+     * 
+     * @param rspStatus
+     *            The response status
+     */
+    public void setStatus(final ResponseStatus rspStatus) {
+        this.status = rspStatus;
     }
 
+    /**
+     * Returns the value of the content type header of this response.
+     * <p>
+     * This is a convenience method.
+     * 
+     * @return The content type header value
+     */
     public String getContentType() {
         return getHeader("Content-Type");
     }
 
-    public void setContentType(String value) {
+    /**
+     * Sets the content type header of this response.
+     * <p>
+     * This is a convenience method.
+     * 
+     * @param value
+     *            The content type header value
+     */
+    public void setContentType(final String value) {
         setHeader("Content-Type", value);
     }
 
+    /**
+     * Returns the value of the content length header of this response.
+     * <p>
+     * This is a convenience method.
+     * 
+     * @return The content length header value
+     */
     public String getContentLength() {
         return getHeader("Content-Length");
     }
 
-    public void setContentLength(String value) {
+    /**
+     * Sets the content type length of this response.
+     * <p>
+     * This is a convenience method.
+     * 
+     * @param value
+     *            The content type header value
+     */
+    public void setContentLength(final String value) {
         setHeader("Content-Length", value);
     }
 
+    /**
+     * Returns the value of the last modified header of this response.
+     * <p>
+     * This is a convenience method.
+     * 
+     * @return The last modified header value
+     */
     public String getLastModified() {
         return getHeader("Last-modified");
     }
 
-    public void setLastModified(String value) {
+    /**
+     * Sets the last modified header of this response.
+     * <p>
+     * This is a convenience method.
+     * 
+     * @param value
+     *            The last modified header value
+     */
+    public void setLastModified(final String value) {
         setHeader("Last-modified", value);
     }
 
     /**
      * Returns the value of a header field.
      * 
-     * @param key
+     * @param headerField
      *            Header field to retrieve the value for
      * @return Value of header field
      */
-    public String getHeader(String key) {
-        key = key.toUpperCase();
+    public String getHeader(final String headerField) {
+        String key = headerField.toUpperCase();
         if (headersGeneral.containsKey(key)) {
             return headersGeneral.get(key);
         } else if (headersResponse.containsKey(key)) {
@@ -199,13 +285,13 @@ public class Response {
      * Values for unknown header fields are stored as entity headers, see
      * rfc1945.
      * 
-     * @param key
+     * @param headerField
      *            Header field
      * @param value
      *            Value of header field
      */
-    public void setHeader(String key, String value) {
-        key = key.toUpperCase();
+    public void setHeader(final String headerField, final String value) {
+        String key = headerField.toUpperCase();
         if (headersGeneral.containsKey(key)) {
             headersGeneral.put(key, value);
         } else if (headersResponse.containsKey(key)) {
@@ -215,16 +301,40 @@ public class Response {
         }
     }
 
-    public void setEntity(String entity) {
+    /**
+     * Sets the entity body to send to the client.
+     * 
+     * @param entity
+     *            The entity body as String type
+     */
+    public void setEntity(final String entity) {
         setEntity(entity.getBytes());
     }
 
-    public void setEntity(byte[] entity) {
+    /**
+     * Sets the entity body to send to the client.
+     * 
+     * @param entity
+     *            The entity body as byte array type
+     */
+    public void setEntity(final byte[] entity) {
         this.entityBody = entity;
         this.setHeader("Content-Length", String.valueOf(entityBody.length));
     }
 
-    public void send(OutputStream output) throws IOException {
+    /**
+     * Send the response to the give output stream.
+     * <p>
+     * This method handles differences between simple and full requests and
+     * additionally does not send an entity body if the request was a HEAD
+     * request.
+     * 
+     * @param output
+     *            The output stream to send the response to
+     * @throws IOException
+     *             In case of stream problems
+     */
+    public void send(final OutputStream output) throws IOException {
         BufferedOutputStream out = new BufferedOutputStream(output);
 
         if (getContentLength() == null) {
@@ -248,14 +358,30 @@ public class Response {
         out.flush();
     }
 
-    private void sendStatusLine(BufferedOutputStream out) throws IOException {
+    /**
+     * Sends the HTTP response status line to the output stream.
+     * 
+     * @param out
+     *            The output stream to send the output to
+     * @throws IOException
+     *             In case of stream problems
+     */
+    private void sendStatusLine(final BufferedOutputStream out) throws IOException {
         StringBuilder sb = new StringBuilder();
         sb.append(protocol).append(SP).append(status.getCode()).append(SP)
         .append(status.getReasonPhrase()).append(CRLF);
         out.write(sb.toString().getBytes());
     }
 
-    private void sendGeneralHeaders(BufferedOutputStream out) throws IOException {
+    /**
+     * Send all general headers to the output stream.
+     * 
+     * @param out
+     *            The output stream to send the output to
+     * @throws IOException
+     *             In case of stream problems
+     */
+    private void sendGeneralHeaders(final BufferedOutputStream out) throws IOException {
         if (getHeader("Date") == null) {
             setHeader("Date", DateConverter.formatRfc1123(new Date()));
         }
@@ -267,7 +393,15 @@ public class Response {
         }
     }
 
-    private void sendResponseHeaders(BufferedOutputStream out) throws IOException {
+    /**
+     * Sends all response headers to the output stream.
+     * 
+     * @param out
+     *            The output stream to send the output to
+     * @throws IOException
+     *             In case of stream problems
+     */
+    private void sendResponseHeaders(final BufferedOutputStream out) throws IOException {
         for (String fieldName : headersResponse.keySet()) {
             String fieldValue = headersResponse.get(fieldName);
             if (fieldValue != null) {
@@ -276,7 +410,18 @@ public class Response {
         }
     }
 
-    private void sendEntityHeaders(BufferedOutputStream out) throws IOException {
+    /**
+     * Sends all entity headers to the output stream.
+     * <p>
+     * The trailing CRLF to indicate the end of the header section has to sent
+     * by the caller and intentionally is not sent by this method.
+     * 
+     * @param out
+     *            The output stream to send the output to
+     * @throws IOException
+     *             In case of stream problems
+     */
+    private void sendEntityHeaders(final BufferedOutputStream out) throws IOException {
         for (String fieldName : headersEntity.keySet()) {
             String fieldValue = headersEntity.get(fieldName);
             if (fieldValue != null) {
@@ -285,12 +430,31 @@ public class Response {
         }
     }
 
-    private byte[] printHeaderLine(String fieldName, String fieldValue) {
+    /**
+     * Formats a header line for a given header field and its value.
+     * <p>
+     * Extended header fields are never generated by this method.
+     * 
+     * @param fieldName
+     *            The heder field name
+     * @param fieldValue
+     *            The header field value
+     * @return Formatted header line string
+     */
+    private byte[] printHeaderLine(final String fieldName, final String fieldValue) {
         return String.format("%s: %s" + CRLF, getPrettyHeaderFieldName(fieldName), fieldValue)
                 .getBytes();
     }
 
-    private String getPrettyHeaderFieldName(String fieldName) {
+    /**
+     * Converts uppercase header field names to header field names with correct
+     * cased, pretty field names.
+     * 
+     * @param fieldName
+     *            The header field name to pretty print
+     * @return The pretty printed header field name
+     */
+    private String getPrettyHeaderFieldName(final String fieldName) {
         if (prettyFieldNames.containsKey(fieldName)) {
             return prettyFieldNames.get(fieldName);
         }

@@ -1,4 +1,4 @@
-package ch.rollis.emma;
+package ch.rollis.emma.request;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +9,6 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ch.rollis.emma.request.Request;
 
 /**
  * HTTP protocol parser.
@@ -261,3 +260,4 @@ public class HttpProtocolParser {
         }
     }
 }
+

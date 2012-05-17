@@ -1,4 +1,4 @@
-package ch.rollis.emma;
+package ch.rollis.emma.request;
 
 /**
  * Enumeration of all methods defined in HTTP/1.0 and HTTP/1.1.
@@ -59,3 +59,4 @@ public enum HttpMethod {
      */
     CONNECT
 }
+

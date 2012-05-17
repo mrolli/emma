@@ -307,7 +307,6 @@ public class VirtualHost {
             }
             return this.alias;
         }
-
     }
-
 }
+

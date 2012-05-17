@@ -498,7 +498,6 @@ public class Configuration {
             }
             return this.virtualHost;
         }
-
     }
-
 }
+
