@@ -185,6 +185,15 @@ public class RequestHandler implements Runnable {
             final Response response) {
         String date = DateConverter.formatLog(new Date());
         String requestDate = response.getHeader("Date");
+        String referer = "";
+        if (request.getHeader("Referer") != null) {
+            referer = request.getHeader("Referer");
+        }
+        String userAgent = "";
+        if (request.getHeader("User-Agent") != null) {
+            userAgent = request.getHeader("User-Agent");
+        }
+
         try {
 
             if (requestDate != null) {
@@ -195,11 +204,10 @@ public class RequestHandler implements Runnable {
             logger.log(Level.WARNING, "Invalid date encountered: " + requestDate.toString());
         }
 
-        String logformat = "%s [%s] \"%s %s %s\" %s %s";
-        return String.format(logformat, client.getHostAddress(), date,
-                request.getMethod(), request.getRequestURI().toString(),
-                request.getProtocol(), response.getStatus().getCode(), response
-                .getHeader("Content-Length"));
+        String logformat = "%s [%s] \"%s %s %s\" %s %s \"%s\" \"%s\"";
+        return String.format(logformat, client.getHostAddress(), date, request.getMethod(), request
+                .getRequestURI().toString(), request.getProtocol(), response.getStatus().getCode(),
+                response.getHeader("Content-Length"), referer, userAgent);
     }
 
     /**
@@ -230,8 +238,6 @@ public class RequestHandler implements Runnable {
                 res.setHeader("Connection", "keep-alive");
                 res.setHeader("Keep-Alive", "timeout=" + (requestTimeout / 1000) + ", max=100");
             }
-        } else {
-            res.setHeader("Connection", "close");
         }
 
         return closeConnection;
