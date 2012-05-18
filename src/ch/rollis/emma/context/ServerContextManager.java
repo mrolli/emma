@@ -57,11 +57,13 @@ public class ServerContextManager {
      */
     public ServerContext getContext(final Request request) throws ServerContextException {
         String host = request.getHeader("Host");
-        if (contexts.containsKey(host)) {
-            return contexts.get(host);
-        } else {
-            return getDefaultContext();
+        if (host != null) {
+            host = host.split(":")[0];
+            if (contexts.containsKey(host)) {
+                return contexts.get(host);
+            }
         }
+        return getDefaultContext();
     }
 
     /**
