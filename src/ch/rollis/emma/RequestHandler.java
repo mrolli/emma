@@ -222,7 +222,8 @@ public class RequestHandler implements Runnable {
             closeConnection = false;
 
             String conHeader = req.getHeader("Connection");
-            if (Thread.currentThread().isInterrupted()) {
+            if (Thread.currentThread().isInterrupted()
+                    || (conHeader != null && conHeader.toLowerCase().equals("close"))) {
                 res.setHeader("Connection", "close");
                 closeConnection = true;
             } else if (conHeader != null && conHeader.toLowerCase().equals("keep-alive")) {
