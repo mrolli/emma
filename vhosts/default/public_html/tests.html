@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="css/demo.css" type="text/css" media="all" />
+        <title>Emma - Features</title>
+        <link rel="shortcut icon" href="favicon.ico" />
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">&nbsp;</div>
+
+            <div class="content">
+                <a class="button-green back" href="index.html">Zurück zur Übersicht</a>
+
+                <h1>Test Cases</h1>
+
+                <div class="testCase">
+                    <div class="title">Title of Test</div>
+                    <div class="request"><code>Request to dispatch</code></div>
+                    <div class="response"><code>Expected result from Emma</code></div>
+                </div>
+                
+                <h2>HTTP Grundlagen mit telnet</h2>
+                <div class="testCase">
+                    <div class="title">Simple Request</div>
+                    <div class="request"><code>$ telnet localhost 8080<br />GET /index.html</code></div>
+                    <div class="response"><code>&lt;!DOCTYPE html><br />
+                        &lt;html&gt;<br />
+                        &lt;head&gt;...<br />
+                    </code></div>
+                </div>
+
+                <div class="testCase">
+                    <div class="title">Full Request GET (HTTP/1.0)</div>
+                    <div class="request"><code>$ telnet localhost 8080<br />GET /index.html HTTP/1.0</code></div>
+                    <div class="response"><code>HTTP/1.0 200 OK<br />
+                    Date: Fri, 18 May 2012 11:01:38 GMT<br />
+                    Server: Emma/1.0<br />
+                    Content-Length: 2151<br />
+                    Last-Modified: Fri, 18 May 2012 10:02:39 GMT<br />
+                    Content-Type: text/html<br />
+                    <br />
+                    &lt;!DOCTYPE html><br />
+                        &lt;html&gt;<br />
+                        &lt;head&gt;...<br />
+                    </code></div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">Unbekannte HTTP Methode: 400 - Bad Request (HTTP/1.0)</div>
+                    <div class="request"><code>$ telnet localhost 8080<br />UNKNOWN /index.html HTTP/1.0</code></div>
+                    <div class="response"><code>HTTP/1.1 400 Bad Request<br />
+                    Date: Fri, 18 May 2012 12:03:30 GMT<br />
+                    Server: Emma/1.0<br />
+                    Content-Length: 188<br />
+                    Content-Type: text/html<br />
+                    <br />
+                    &lt;html&gt;&lt;head&gt;&lt;title&gt;Bad Request&lt;/title&gt;...
+                    </code></div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">Missing Host Header: 400 - Bad Request (HTTP/1.0)</div>
+                    <div class="request"><code>$ telnet localhost 8080<br />GET /index.html HTTP/1.1<br /></code></div>
+                    <div class="response"><code>HTTP/1.1 400 Bad Request<br />
+                    Date: Fri, 18 May 2012 12:03:30 GMT<br />
+                    Server: Emma/1.0<br />
+                    Content-Length: 188<br />
+                    Content-Type: text/html<br />
+                    <br />
+                    &lt;html&gt;&lt;head&gt;&lt;title&gt;Bad Request&lt;/title&gt;...
+                    </code></div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">501 - Not Implemented (HTTP/1.1)</div>
+                    <div class="request"><code>$ telnet localhost 8080<br />PUT /index.html HTTP/1.1<br />Host: localhost</code></div>
+                    <div class="response"><code>HTTP/1.1 501 Not Implemented<br />
+                    Date: Fri, 18 May 2012 12:06:46 GMT<br />
+                    Server: Emma/1.0<br />
+                    Content-Length: 196<br />
+                    Content-Type: text/html<br />
+                    <br />
+                    &lt;html&gt;&lt;head&gt;&lt;title&gt;Not implemented&lt;/title&gt;...
+                    </code></div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">HEAD Request (HTTP/1.0)</div>
+                    <div class="request"><code>$ telnet localhost 8080<br />HEAD /index.html HTTP/1.0</code></div>
+                    <div class="response"><code>HTTP/1.0 200 OK<br />
+                    Date: Fri, 18 May 2012 11:06:36 GMT<br />
+                    Server: Emma/1.0<br />
+                    Content-Length: 2151<br />
+                    Last-Modified: Fri, 18 May 2012 10:02:39 GMT<br />
+                    Content-Type: text/html<br />
+                    <br />
+                    </code></div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">Conditional GET Request (HTTP/1.0) <span class="small"><b>Cave:</b> Date format in rfc1036, not rfc1123! Even ANSI C's asctime() works!</span></div>
+                    <div class="request"><code>$ telnet localhost 8080<br />GET /index.html HTTP/1.0<br />If-Modified-Since: Fri, 18-May-12 10:58:08 GMT</code></div>
+                    <div class="response"><code>HTTP/1.0 304 Not Modified<br />
+                    Date: Fri, 18 May 2012 11:14:18 GMT<br />
+                    Server: Emma/1.0<br />
+                    Content-Length: 190<br />
+                    Content-Type: text/html<br />
+                    <br />
+                    &lt;html&gt;&lt;head&gt;&lt;title&gt;Not Modified&lt;/title&gt;...
+                    </code></div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">GET Request on resource not available (HTTP/1.0)</div>
+                    <div class="request"><code>$ telnet localhost 8080<br />GET /notfound.html HTTP/1.0</code></div>
+                    <div class="response"><code>HTTP/1.0 404 Not Found<br />
+                    Date: Fri, 18 May 2012 11:25:28 GMT<br />
+                    Server: Emma/1.0<br />
+                    Content-Length: 184<br />
+                    Content-Type: text/html<br />
+                    <br />
+                    &lt;html&gt;&lt;head&gt;&lt;title&gt;Not Found&lt;/title&gt;...
+                    </code></div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">Request on directory without trailing slash (HTTP/1.0)</div>
+                    <div class="request"><code>$ telnet localhost 8080<br />GET /images HTTP/1.0</code></div>
+                    <div class="response"><code>HTTP/1.0 301 Moved Permanently<br />
+                    Date: Fri, 18 May 2012 11:41:37 GMT<br />
+                    Location: http://localhost:8080/images/<br />
+                    Server: Emma/1.0<br />
+                    Content-Length: 200<br />
+                    Content-Type: text/html<br />
+                    <br />
+                    &lt;html&gt;&lt;head&gt;&lt;title&gt;Moved Permanently&lt;/title&gt;...
+                    </code></div>
+                </div>
+
+                <h2>Virtuelle Server und sonstige Features</h2>
+                <p>Im Folgenden ist es einfacher, die Tests per Browser durchzuführen. Dazu müssen die Namen der virtuellen Hosts in <code>/etc/hosts</code>
+                     (resp. <code>C:\windows\system32\drivers\etc\hosts</code>) angepasst werden:<br />
+                     <code>127.0.0.1&nbsp;&nbsp;&nbsp;localhost www.localhost test.localhost</code></p>
+                <p>Google Chrome erweist sich mit seinen Entwicklertools als ungemein praktisch, da man so sämtlichen Netzwerkverkehr bequem anschauen kann. Emma selber
+                    liefert Information über RequestHandler Threads (Start, Request, Request Timeouts und End) direkt auf Stdout.</p>
+                
+                <div class="testCase">
+                    <div class="title">SSL verschlüsselte Verbindung auf Port 8443</div>
+                    <div class="request"><code><a href="https://localhost:8443/index.html" target="_blank">https://localhost:8443/index.html</a></code></div>
+                    <div class="response">Willkommensseite per https - nach Akzeptierung des selbstsignierten Zertifikats</div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">Virtueller Host <code>test.localhost</code> auf Port 8080</div>
+                    <div class="request"><code><a href="http://test.localhost:8080/index.html" target="_blank">http://test.localhost:8080/index.html</a></code></div>
+                    <div class="response">Indexseite des virtuellen Hosts <code>test.localhost</code></div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">GET auf Aliasnamen des default Host (<code>www.localhost</code>) auf Port 8080</div>
+                    <div class="request"><code><a href="http://www.localhost:8080/index.html" target="_blank">www://www.localhost:8080/index.html</a></code></div>
+                    <div class="response">Willkommensseite des default Hosts</div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">GET Request auf Direcotry mit automatischer Auslieferung der Indexseite (default file)</div>
+                    <div class="request"><code><a href="http://localhost:8080/" target="_blank">http://localhost:8080/</a></code></div>
+                    <div class="response">Willkommensseite</div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">Auslieferung des Directory Listings</div>
+                    <div class="request"><code><a href="http://localhost:8080/images/" target="_blank">http://localhost:8080/images/</a></code></div>
+                    <div class="response">Directory Listing des Subfolder <code>images/</code></div>
+                </div>
+                
+                <div class="testCase">
+                    <div class="title">Auslieferung des Directory Listings bei verbotener Auflistung (allowIndexes = false)</div>
+                    <div class="request"><code><a href="http://test.localhost:8080/images/" target="_blank">http://test.localhost:8080/images/</a></code></div>
+                    <div class="response">Fehlerseite 403 - Forbidden</div>
+                </div>
+                
+                <h2>Unter der Haube</h2>
+                <ul>
+                    <li>Konfiguration mittels XML (JAXB Unmarshalling): <code>./config/server.xml</code>; Schema <code>./config/schema.xsd</code></li>
+                    <li>Logfiles pro virtuellem Host; siehe <code>./vhosts/default/log/access.log</code> respektive <code>./vhosts/test/log/access.log</code></li>
+                
+                <a class="button-green back" href="index.html">Zurück zur Übersicht</a>
+            </div>
+            <div class="footer">
+                Copyright (c) 2012 Michael Rolli - <a href="http://github.com/mrolli/emma/" target="_blank">github.com/mrolli/emma</a><br />
+                This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Switzerland License.<br/>
+                Based on images/css courtesy of <a href="http://www.symfony.com/" target="_blank">Symfony</a>
+            </div>
+        </div>
+    </body>
+</html>

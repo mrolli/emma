@@ -273,26 +273,3 @@ a.back {
 span.small {
   font-size: 80%;
 }
-
-div.testCase {
-  padding: 3px 5px;
-  border: 1px solid #EAEAEA;
-  border-radius: 3px;
-  margin-bottom: 15px;
-}
-
-div.testCase .title { font-weight: bold; }
-
-div.testCase .request, div.testCase .response {
-  margin: 5px 3px;
-  padding: 0 5px;
-  white-space: nowrap;
-  border: 1px solid #EAE0E0;
-  background-color: #F8F0F0;
-  border-radius: 3px;
-}
-
-div.testCase .response {
-  border-color: #E0EAE0;
-  background-color: #F0F8F0;
-}

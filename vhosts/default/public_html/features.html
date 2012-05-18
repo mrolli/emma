@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="css/demo.css" type="text/css" media="all" />
+        <title>Emma - Features</title>
+        <link rel="shortcut icon" href="favicon.ico" />
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">&nbsp;</div>
+
+            <div class="content">
+                <a class="button-green back" href="index.html">Zurück zur Übersicht</a>
+                
+                <h1>Was ich alles kann!</h1>
+
+                <h2>Features</h2>
+                <ul class="list">
+                    <li>Unterstützung für Simple-Requests (HTTP/0.9) und Full-Requests (HTTP/1.0+) nach rfc1945 resp. rfc2616</li>
+                    <li><b>Parallele Abarbeitung</b> aller Client-Requests (Threading)</li>
+                    <li>Unterstützung für Keep-Alive (HTTP/1.1, dort default) <span class="small">(Request Timeout auf 15s eingestellt, siehe RequestHandler.requestTimeout)</span></li>
+                    <li>Sockets auf <b>mehreren Ports</b> möglich (default: 8080, 8443)</li>
+                    <li>Pro Port <b>SSL-Verschlüsselung</b> zuschaltbar (8443 default SSL, siehe ./config/server.xml)</li>
+                    <li>Implementierte HTTP Methoden: <b>GET, HEAD</b> <span class="small">(POST, PUT, DELETE, OPTIONS nicht implementiert, aber gesendetes Entity wird geparsed und im Requestobjekt abgelegt)</span></li>
+                    <li>Unterstützung für <b>Conditional GET</b> mit korrektem Response Code (304 - Not Modified)</li>
+                    <li>Bei Requests ohne trailing Slash auf ein Directory folgt ein Redirect auf korrekte URL (301 - Moved Permanently)</li>
+                    <li>Bei Requests auf ein Directory wird in diesem nach einem konfigurierbaren (@see Emma.DEFAULT_FILES) <b>Index</b> gesucht - default: <b>index.html, index.htm</b></li>
+                    <li>Bei Requests auf ein Directory ohne Index wird ein <b>Directory Listing</b> gesendet, falls dies erlaubt ist (siehe virtuelle Hosts)</li>
+                    <li>Unterstützung für <b>Virtuelle Hosts (VH)</b> (siehe ./config/server.xml):
+                        <ul>
+                            <li>Beliebige Anzahl VH konfigurierbar</li>
+                            <li>Pro VH ein Server Name sowie beliebige Aliase</li>
+                            <li>Request-Logging pro virtuellem Host im Apache Style (inkl. Response Code, Content Length, Referer, User-Agent)</li>
+                            <li>Auslieferung des default Hosts, wenn der Request einen unbekannten Host referenziert</li>
+                            <li>Option "allowIndexes" (Directory Listings) pro VH</li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <h2>Unterstützte Header Fields</h2>
+                <h3>Request</h3>
+                <ul>
+                    <li>Alle Request Headers werden geparsed und im Requestobjekt abgelegt (unbekannte als Entity Headers)</li>
+                    <li><b>General Headers:</b> Connection</li>
+                    <li><b>Request Headers:</b> Host, If-Modified-Since (Conditional GET), Referer, User-Agent</li>
+                    <li><b>Entity Headers:</b> Content-Length <span class="small">löst ein Einlesen des Entity aus</span></li>
+                </ul>
+                <h2>Unterstützte Header Fields</h2>
+                <h3>Response</h3>
+                <ul>
+                    <li><b>General Headers:</b> Date (nach rfc1135), Connection</li>
+                    <li><b>Response Headers:</b> Server, Location</li>
+                    <li><b>Entity Headers:</b> Content-Type <span class="small">(Mime Type basierend auf file extension)</span>, Content-Length, Last-Modified
+                </ul>
+                
+                <h2>Nicht zu vergessen</h2>
+                <ul class="list">
+                    <li>Fehlermeldungen (z.B. 400 - Bad Request, 404 - Not found, 500 - Internal Server Error) mit menschenlesbarer HTML-Response</li>
+                    <li>Mittels quit, exit oder shutdown kann Emma per stdin gracefully beendet werden, <span class="small">d.h. aktuelle Requests werden noch bearbeitet ehe alle Threads ordentlich beendet werden</span></li>
+                    <li>XML-basierte Konfiguration einiger Einstellungen des Servers und der virtuellen Hosts (JAXB; vgl. ./config/schema.xsd)</li>
+                    <li>Vollständige <a href="doc/" target="_blank">API-Dokumentation</a></li>
+                </ul>
+
+                <a class="button-green back" href="index.html">Zurück zur Übersicht</a>
+            </div>
+            <div class="footer">
+                Copyright (c) 2012 Michael Rolli - <a href="http://github.com/mrolli/emma/" target="_blank">github.com/mrolli/emma</a><br />
+                This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Switzerland License.<br/>
+                Based on images/css courtesy of <a href="http://www.symfony.com/" target="_blank">Symfony</a>
+            </div>
+        </div>
+    </body>
+</html>
