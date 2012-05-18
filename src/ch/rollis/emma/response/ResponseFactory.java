@@ -69,8 +69,7 @@ public class ResponseFactory {
         Response response = getDefaultResponse();
         response.setStatus(status);
         response.setHeader("Content-Type", "text/html");
-        response.setEntity(String.format(HTML_TEMPLATE, status.getReasonPhrase(), status.getCode(),
-                status.getReasonPhrase(), ""));
+        response.setEntity(getReponseBody(status, null));
         return response;
     }
 
@@ -91,19 +90,13 @@ public class ResponseFactory {
         response.setRequest(request);
         response.setStatus(status);
         response.setHeader("Content-Type", "text/html");
-        String humanReasonPhrase = "";
-        if (status.equals(ResponseStatus.NOT_FOUND)) {
-            humanReasonPhrase = String.format("The requested URL %s was not found on this server.",
-                    request.getRequestURI().getPath());
-        }
-        response.setEntity(String.format(HTML_TEMPLATE, status.getReasonPhrase(), status.getCode(),
-                status.getReasonPhrase(), humanReasonPhrase));
+        response.setEntity(getReponseBody(status, request));
         return response;
     }
 
     /**
-     * Returns a default response with preconfigured headers set on all reponses
-     * of this server.
+     * Returns a default response with preconfigured headers set on all
+     * responses of this server.
      * 
      * @return Repomse object
      */
@@ -111,5 +104,40 @@ public class ResponseFactory {
         Response response = new Response();
         response.setHeader("Server", Emma.SERVER_TOKEN);
         return response;
+    }
+
+    /**
+     * Returns the entity body of an automatically generated response like
+     * "not found", "not implemented" and there like.
+     * 
+     * @param status
+     *            The response status encountered
+     * @param request
+     *            The request the response answers.
+     * @return The entity body
+     */
+    private String getReponseBody(final ResponseStatus status, final Request request) {
+        if (request == null) {
+            return String.format(HTML_TEMPLATE, status.getReasonPhrase(), status.getCode(),
+                    status.getReasonPhrase(), "");
+        }
+
+        String humanReasonPhrase = "";
+        switch (status) {
+            case NOT_FOUND:
+                humanReasonPhrase = String.format(
+                        "The requested URL %s was not found on this server.", request
+                        .getRequestURI().getPath());
+                break;
+            case FORBIDDEN:
+                humanReasonPhrase = String.format(
+                        "You don't have permission to access %s on this server.", request
+                        .getRequestURI().getPath());
+                break;
+            default:
+                break;
+        }
+        return String.format(HTML_TEMPLATE, status.getReasonPhrase(), status.getCode(),
+                status.getReasonPhrase(), humanReasonPhrase);
     }
 }
