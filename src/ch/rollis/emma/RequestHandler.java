@@ -111,7 +111,8 @@ public class RequestHandler implements Runnable {
                     Request request;
                     // setup request timer to handle situations where the client
                     // does not send anything
-                    Thread timer = new Thread(new RequestHandlerTimeout(comSocket, requestTimeout, logger));
+                    Thread timer = new Thread(new RequestHandlerTimeout(comSocket, requestTimeout,
+                            logger));
                     timer.start();
                     try {
                         request = parser.parse();
